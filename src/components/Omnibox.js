@@ -1,6 +1,8 @@
 import React from 'react';
+import Lozenge from './Lozenge';
+import OmniboxSearch from './OmniboxSearch'
 
-export class Omnibox extends React.Component {
+export default class Omnibox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,46 +11,25 @@ export class Omnibox extends React.Component {
   }
 
   render() {
-
+    const lozenges = this.props.lozenges.map( lozenge => {
+      return <Lozenge 
+                {...lozenge} 
+                removeDescendants={this.props.removeDescendants}
+                key={lozenge.id}  
+                />
+    })
+    lozenges.reverse();
+    
     return(
       <div>
         <h3>Omnibox</h3>
-        <OmniboxSearch />
+        <OmniboxSearch
+          searchProducts={this.props.searchProducts}
+        />
+        {lozenges}
       </div>
 
     )
   }
 }
 
-class OmniboxSearch extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: '',
-    }
-  }
-
-  handleChange = (event) => {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(this.state.value);
-    // something
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Search"/>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-        
-    )
-
-  }
-
-}

@@ -9,8 +9,6 @@ const app = express()
 
 app.use(cors())
 
-app.get('/hey', (req, res) => res.send('ho!'))
-
 // app.post(`/post`, async (req, res) => {
 //   const { title, content, authorEmail } = req.body
 //   const result = await prisma.post.create({
@@ -61,6 +59,26 @@ app.get(`/children/:id`, async (req, res) => {
     },
   })
   res.json(children)
+})
+
+app.get(`/search`, async (req, res) => {
+  const query = req.query.q
+  console.log(query)
+  const results = await prisma.products.findMany({
+    where: {
+      AND: [
+        {
+          name: {
+            contains: query,
+          },  
+        },
+        {
+          type: 'product',
+        }
+      ]     
+    },
+  })
+  res.json(results)
 })
 
 

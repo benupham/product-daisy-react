@@ -1,6 +1,6 @@
 import React from 'react';
 
-export class Product extends React.Component {
+export default class Product extends React.Component {
 
   handleClick = e => {
     // Summon the product detail modal

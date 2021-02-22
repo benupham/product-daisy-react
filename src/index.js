@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { testItems } from './api/fakeData';
-import { Cart } from './components/Cart';
-import { Omnibox } from './components/Omnibox';
-import { Product } from './components/Product';
-import { ProductCategory } from './components/ProductCategory';
+import { fetchChildren, fetchSearch } from './api/api';
+import Cart from './components/Cart';
+import Omnibox from './components/Omnibox';
+import Product from './components/Product';
+import ProductCategory from './components/ProductCategory';
 import './index.css';
 
 
@@ -14,64 +14,101 @@ class App extends React.Component {
     this.state = {
       items: [],
       promoItems: [],
+      lozenges: [],
       cart: [],
       theGrid: [],
+      isLoaded: false,
     }
   }
 
   componentDidMount() {
-    this.fetchChildren(0)
-    .then(data => this.setState({ items: this.state.items.concat(data) }));
+    fetchChildren(0) // 0 is the parent of Departments
+    .then(data => this.setState({ 
+      items: this.state.items.concat(data),
+      isLoaded: true, 
+    }));
   }
 
-  async fetchChildren(parentId) {
-    const url = `http://localhost:3001/children/${parentId}`;
-    const options = {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-      }
-    }
-    return fetch(url, options)
-    .then(res => res.json())
-    .catch(err => console.log('the error',err))
-  }
-
-  addChildren = async (parentId) => {
-    this.fetchChildren(parentId)
+  addChildren = (parentId) => {
+    fetchChildren(parentId)
     .then(data => {
       if (data.length > 0) {
         let items = [...this.state.items.concat(data)];
         const index = items.findIndex(item => item.id === parentId);
-        items[index].isOpen = true;
-        this.setState({ items });
+        const parent = {...items[index], isOpen: true};
+        items[index] = parent;
+
+        this.setState({
+          items,
+        });
+
+        this.addLozenge(parent, null);
       }
     });
   };
 
-  removeDescendants = (itemIndex) => {
-    // This may need to be a deep copy to avoid state mutants
-    let items = [...this.state.items];
-    let parent = {...items[itemIndex]};
-    this.recursiveDescedantRemoval(items, parent);
-    parent.isOpen = false; 
-    items[itemIndex] = parent;
-    this.setState({
-      items: items,
-    })  
+  addLozenge(item, query=null) {
+    const lozenge = {...item};
+    this.setState({ 
+      lozenges: this.state.lozenges.concat([lozenge]), 
+    });  
   }
 
-  recursiveDescedantRemoval = (items, parent) => {
+  removeDescendants = (parentId) => {
+    // This may need to be a deep copy to avoid state mutants
+    let items = [...this.state.items]; 
+    let lozenges = this.state.lozenges.filter(loz => loz.id !== parentId);
+    console.log('lozenges',lozenges);
+    const parentIndex = items.findIndex(item => item.id === parentId);
+    // This is a category we're removing, not search results
+    if (parentIndex >= 0) {
+      let parent = {...this.state.items[parentIndex]};
+      parent.isOpen = false; 
+      items[parentIndex] = parent;
+    }
+
+    this.recursiveDescedantRemoval(items, parentId);
+    this.recursiveDescedantRemoval(lozenges, parentId);
+    this.setState({
+      items,
+      lozenges
+    })  
+  }
+  //TODO: Can't figure out how to remove child lozenges of parents that are removed
+  recursiveDescedantRemoval = (items, parentId) => {
     for( let i = 0; i < items.length; i++){ 
-      if ( items[i].parent === parent.id) {
+      if ( items[i].parent === parentId) {
         if (items[i].isOpen) {
-          this.recursiveDescedantRemoval(items, items[i]);
+          this.recursiveDescedantRemoval(items, items[i].id);
         }
         items.splice(i, 1);
         i--;
       }
     }    
+  }
+
+  searchProducts = (query) => {
+    const timestamp = Date.now();
+    const queryId = query + '-' + timestamp;
+    fetchSearch(query)
+    .then(data => {
+      data.forEach(product => {
+        product.id = product.id + '-' + queryId;
+        product.parent = queryId;
+      });
+      this.setState({ 
+        items: this.state.items.concat(data),
+      })
+
+      const lozenge = {
+        type: 'search',
+        id: queryId,
+        name: `"${query}"`,
+        parent: null,
+        qty: data.length,
+      }
+      this.addLozenge(lozenge);
+    })
   }
 
   addToCart = (itemIndex) => {
@@ -85,7 +122,7 @@ class App extends React.Component {
     this.setState({
       cart: this.state.cart.filter((item, index) => index !== itemIndex)
     })
-  }
+  }  
 
   render() {
     return (
@@ -93,6 +130,9 @@ class App extends React.Component {
         <Omnibox 
           items={this.state.items} 
           removeDescendants={this.removeDescendants}
+          searchProducts={this.searchProducts}
+          lozenges={this.state.lozenges}
+          removeLozenge={this.removeLozenge}
         />
         <ShopFloor 
           items={this.state.items} 
