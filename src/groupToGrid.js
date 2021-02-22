@@ -1,4 +1,3 @@
-import { items } from ".";
 import { GRID_WIDTH, GRID_HEIGHT, GRID_UNIT_SIZE, typeSize } from "./constants";
 
 /* 
@@ -21,13 +20,19 @@ TO DO
 */
 
 export let grid = {
+
   cells : [],
+  itemsWidth : 0, // these should probaby not be on the class
+  itemsHeight : 0,
+  groupGridBounds : [],
+  itemsType : null,
+  itemsSize : [],
   
   init : function() {
     this.cells = [];
-    for(var i = 0; i < GRID_WIDTH; i++) {
-      for(var j = 0; j < GRID_HEIGHT; j++) {
-        var cell;
+    for(let i = 0; i < GRID_WIDTH; i++) {
+      for(let j = 0; j < GRID_HEIGHT; j++) {
+        let cell;
         cell = {
           x : i * GRID_UNIT_SIZE,
           y : j * GRID_UNIT_SIZE,
@@ -38,10 +43,12 @@ export let grid = {
         this.cells.push(cell);
       };
     };
+    console.log('grid initialized with ' + this.cells.length + ' cells')
+    return this.cells;
   },
   
   resetCells : function(occupiedCells) {
-    occupiedCells.forEach(cellId =>{
+    occupiedCells.forEach(cellId => {
       this.cells[cellId].occupied = false;
       this.cells[cellId].pid = null;
       this.cells[cellId].parent = null;  
@@ -80,12 +87,6 @@ export let grid = {
     return candidate
   },
 
-  itemsWidth : 0, // these should probaby not be on the class
-  itemsHeight : 0,
-  groupGridBounds : [],
-  itemsType : null,
-  itemsSize : [],
-
   snapToGrid : function(p) { 
 
     if (Array.isArray(p)) {
@@ -98,20 +99,16 @@ export let grid = {
       let sqrt = Math.floor(Math.sqrt(p.length));
 
       if (typeWidth > typeHeight) {
-        // console.log('width >= height')
         let itemsWidthUnits = sqrt * typeWidth;
         console.log('items',p.length,'totalunits', totalUnits, 'sqrt', sqrt, 'width in units',itemsWidthUnits);
         for (let i = 0; i < totalUnits; i++) {
           if (itemsWidthUnits * i * typeHeight >= totalUnits) {
             this.itemsHeight = i * typeHeight;
             this.itemsWidth = itemsWidthUnits;
-            // console.log(this.itemsWidth)
             break;
           } 
         }
       } else {
-        console.log('height > width')
-        
         // Force product groups to be wider than tall.
         let itemsHeightUnits = Math.max(sqrt-1,1) * typeHeight;
         console.log('items',p.length,'totalunits', totalUnits, 'sqrt', sqrt, 'height in units',itemsHeightUnits);
@@ -119,7 +116,6 @@ export let grid = {
           if (itemsHeightUnits * i * typeWidth >= totalUnits) {
             this.itemsWidth = i * typeWidth;
             this.itemsHeight = itemsHeightUnits;
-            console.log(this.itemsWidth)
             break;
           } 
         }
@@ -156,17 +152,11 @@ export let grid = {
           const groupCell = groupGrid[i];
           const candidate = this.fitByType(groupCell);
           if (candidate) {
-
             this.placeItem(pr, candidate, groupCell);
-
             break;
-          }
-          
+          } 
         }
-
       })
-        
-
     } else {
       // for fitting individual items (promos)
       console.log('p is not an array')
@@ -217,9 +207,6 @@ export let grid = {
 
     const item = Array.isArray(p) ? p[0] : p;
     const isArray = Array.isArray(p) ? true : false;
-    // if (!Array.isArray(p)) {
-    //   console.log(p.name);
-    // } 
 
     /* TODO: Rewrite as a search rippling out as
     concentric circles from the clicked item, return
@@ -227,7 +214,7 @@ export let grid = {
     */
 
     // Run through all the cells in the grid
-    for(var cell = 0; cell < this.cells.length; cell++) {
+    for(let cell = 0; cell < this.cells.length; cell++) {
       // See if the item would fit in that cell
       let candidate = this.fitByType(cell);
       
@@ -250,7 +237,6 @@ export let grid = {
   },
 
   sqdist : function(a, b) {    
-    // return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2);
     return Math.hypot(a.x - b.x, a.y - b.y);
   },
 
@@ -259,8 +245,6 @@ export let grid = {
   sqdist2 : function(item, candidate, isArray) {
 
     let a = item;
-
-    
 
     return candidate.reduce((prev,current) => {
       let c = this.cells[current];

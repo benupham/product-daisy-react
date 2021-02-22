@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import { fetchChildren, fetchSearch } from './api/api';
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
-import Product from './components/Product';
-import ProductCategory from './components/ProductCategory';
+import ShopFloor from './components/ShopFloor';
+import { grid } from './groupToGrid';
 import './index.css';
 
 
@@ -16,9 +16,9 @@ class App extends React.Component {
       promoItems: [],
       lozenges: [],
       cart: [],
-      theGrid: [],
       isLoaded: false,
     }
+    grid.init();
   }
 
   componentDidMount() {
@@ -58,7 +58,6 @@ class App extends React.Component {
     // This may need to be a deep copy to avoid state mutants
     let items = [...this.state.items]; 
     let lozenges = this.state.lozenges.filter(loz => loz.id !== parentId);
-    console.log('lozenges',lozenges);
     const parentIndex = items.findIndex(item => item.id === parentId);
     // This is a category we're removing, not search results
     if (parentIndex >= 0) {
@@ -74,7 +73,7 @@ class App extends React.Component {
       lozenges
     })  
   }
-  //TODO: Can't figure out how to remove child lozenges of parents that are removed
+  
   recursiveDescedantRemoval = (items, parentId) => {
     for( let i = 0; i < items.length; i++){ 
       if ( items[i].parent === parentId) {
@@ -149,48 +148,6 @@ class App extends React.Component {
     )
   }
 }
-
-class ShopFloor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-
-    };
-  }
-
-  render() {
-    const items = this.props.items.map((item, index) => {
-      if (item.type !== 'product') {
-        return (
-          <ProductCategory  
-            {...item}
-            itemIndex={index}
-            addChildren={this.props.addChildren}
-            removeDescendants={this.props.removeDescendants}
-            key={item.id}
-          />
-        )
-      } else {
-        return <Product 
-                {...item} 
-                key={item.id}
-                itemIndex={index} 
-                addToCart={this.props.addToCart}  
-                />
-      }
-    }
-    );
-
-    return (
-      <div className="ShopFloor">
-        <ul>
-          {items}
-        </ul>
-      </div>
-    );  
-  }
-}
-
 
 ReactDOM.render(
   <App />,

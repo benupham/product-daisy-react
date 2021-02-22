@@ -65,6 +65,7 @@ app.get(`/search`, async (req, res) => {
   const query = req.query.q
   console.log(query)
   const results = await prisma.products.findMany({
+    take: 20,
     where: {
       AND: [
         {
