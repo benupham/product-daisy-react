@@ -25,22 +25,32 @@ class App extends React.Component {
 
   componentDidMount() {
     fetchChildren(0) // 0 is the parent of Departments
-    .then(data => this.setState({ 
-      items: this.state.items.concat(data),
-      isLoaded: true, 
-    }));
+    .then(data => {
+      if (data.length > 0) {
+        const origin = {x: 15000, y: 15000};
+        const [grid, items] = groupToGridGroup(origin, data, this.state.grid);
+        console.log('items data',items)
+
+        this.setState({
+          items,
+          grid,
+          isLoaded: true,
+        });      
+      }
+    });
   }
 
   addChildren = (parentId) => {
     fetchChildren(parentId)
     .then(data => {
       if (data.length > 0) {
-        const index = this.state.items.findIndex(item => item.id === parentId);
-        const parent = {...this.state.items[index], isOpen: true};
-        const [grid, items] = groupToGridGroup(parent, data, this.state.grid, this.state.items);
-        console.log('items data',items)
-        // const grid = this.setGridCells(this.state.grid, itemsData);
-        // const items = [...this.state.items.concat(itemsData)];
+        const oldItems = [...this.state.items];
+        const index = oldItems.findIndex(item => item.id === parentId);
+        const parent = {...oldItems[index], isOpen: true};
+        // TODO: Change parent (origin) to mouseclick x y 
+        const [grid, newItems] = groupToGridGroup(parent, data, this.state.grid);
+        console.log('items data',newItems)
+        const items = [...oldItems, ...newItems];
         items[index] = parent;
 
         this.setState({
@@ -48,27 +58,12 @@ class App extends React.Component {
           grid,
         });
 
-        this.addLozenge(parent, null);
+        this.addLozenge(parent);
       }
     });
   };
 
-  unsetGridCells = (grid, occupiedCells) => {
-    const newGrid = [...grid];
-    occupiedCells.forEach(cell => {
-      const emptiedCell = {
-        ...newGrid[cell],
-        occupied: false,
-        pid: null,
-        parent: null,
-      };
-      newGrid[cell] = emptiedCell;
-    })
-    return newGrid; 
-  }
-
-
-  addLozenge(item, query=null) {
+  addLozenge(item) {
     const lozenge = {...item};
     this.setState({ 
       lozenges: this.state.lozenges.concat([lozenge]), 
@@ -77,8 +72,8 @@ class App extends React.Component {
 
   removeDescendants = (parentId) => {
     // This may need to be a deep copy to avoid state mutants
-    let items = [...this.state.items]; 
-    let lozenges = this.state.lozenges.filter(loz => loz.id !== parentId);
+    const items = [...this.state.items];
+    const lozenges = this.state.lozenges.filter(loz => loz.id !== parentId);
     const parentIndex = items.findIndex(item => item.id === parentId);
     // This is a category we're removing, not search results
     if (parentIndex >= 0) {
@@ -86,20 +81,26 @@ class App extends React.Component {
       parent.isOpen = false; 
       items[parentIndex] = parent;
     }
+    const grid = [...this.state.grid];
 
-    this.recursiveDescedantRemoval(items, parentId);
+    this.recursiveDescedantRemoval(items, parentId, grid);
     this.recursiveDescedantRemoval(lozenges, parentId);
     this.setState({
       items,
-      lozenges
+      lozenges,
+      grid
     })  
   }
-  
-  recursiveDescedantRemoval = (items, parentId) => {
+  // TODO: Issues with removing search items and unsetting grid
+  recursiveDescedantRemoval = (items, parentId, grid = null) => {
     for( let i = 0; i < items.length; i++){ 
       if ( items[i].parent === parentId) {
         if (items[i].isOpen) {
           this.recursiveDescedantRemoval(items, items[i].id);
+        }
+        if (grid) {
+          console.log('cells',items[i].cells)
+          this.unsetGridCells(grid, items[i].cells)
         }
         items.splice(i, 1);
         i--;
@@ -107,27 +108,51 @@ class App extends React.Component {
     }    
   }
 
-  searchProducts = (query) => {
-    const timestamp = Date.now();
-    const queryId = query + '-' + timestamp;
-    fetchSearch(query)
-    .then(data => {
-      data.forEach(product => {
-        product.id = product.id + '-' + queryId;
-        product.parent = queryId;
-      });
-      this.setState({ 
-        items: this.state.items.concat(data),
-      })
-
-      const lozenge = {
-        type: 'search',
-        id: queryId,
-        name: `"${query}"`,
+  unsetGridCells = (grid, occupiedCells) => {
+    // const newGrid = [...grid];
+    occupiedCells.forEach(cell => {
+      const emptiedCell = {
+        ...grid[cell],
+        occupied: false,
+        pid: null,
         parent: null,
-        qty: data.length,
+      };
+      grid[cell] = emptiedCell;
+    })
+    return grid; 
+  }
+
+  searchProducts = (searchQuery) => {
+    const timestamp = Date.now();
+    const queryId = searchQuery + '-' + timestamp;
+    fetchSearch(searchQuery)
+    .then(searchData => {
+      if (searchData.length > 0) {
+        searchData.forEach(searchResult => {
+          searchResult.id = searchResult.id + '-' + queryId;
+          searchResult.parent = queryId;
+        }); 
+        
+        const origin = {x: 15000, y: 15000};
+        // TODO: Change origin to last mouseclick x y or current center of window
+        const [grid, newItems] = groupToGridGroup(origin, searchData, this.state.grid);
+        //console.log('items searchData',items)
+
+        this.setState({
+          items: this.state.items.concat(newItems),
+          grid,
+        });
+
+        const lozenge = {
+          type: 'search',
+          id: queryId,
+          name: `"${searchQuery}"`,
+          parent: null,
+          qty: searchData.length,
+        }
+        this.addLozenge(lozenge);
       }
-      this.addLozenge(lozenge);
+
     })
   }
 
@@ -152,7 +177,6 @@ class App extends React.Component {
           removeDescendants={this.removeDescendants}
           searchProducts={this.searchProducts}
           lozenges={this.state.lozenges}
-          removeLozenge={this.removeLozenge}
         />
         <ShopFloor 
           items={this.state.items} 

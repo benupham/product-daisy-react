@@ -79,12 +79,7 @@ function determineItemsGridSize(itemsType, itemsCount) {
 // on the grid so they are grouped together
 // and close to their parent category item 
 // return the updated items data
-export function groupToGridGroup(parent, itemsData, grid, oldItems) {
-
-  if (!parent.x) {
-    parent.x = GRID_WIDTH * GRID_UNIT_SIZE/2;
-    parent.y = GRID_HEIGHT * GRID_UNIT_SIZE/2; 
-  }
+export function groupToGridGroup(origin, itemsData, grid, oldItems) {
   
   const newGrid = [...grid];
   const itemsType = itemsData[0].type; 
@@ -94,7 +89,7 @@ export function groupToGridGroup(parent, itemsData, grid, oldItems) {
   const [itemsGridWidth, itemsGridHeight] = determineItemsGridSize(itemsType, itemsData.length);
 
   // Then find the closest spot for that containing rectangle. 
-  const groupGrid = findClosestPosition({x: parent.x, y: parent.y}, itemsGridWidth, itemsGridHeight, newGrid);
+  const groupGrid = findClosestPosition({x: origin.x, y: origin.y}, itemsGridWidth, itemsGridHeight, newGrid);
   console.log('item grid',groupGrid);
   
   // Define the corner coordinates (bounds) of the rect of items
@@ -130,7 +125,7 @@ export function groupToGridGroup(parent, itemsData, grid, oldItems) {
     }
   })
   
-  return [newGrid, [...oldItems, ...itemsData]]; 
+  return [newGrid, itemsData]; 
 
 }
 

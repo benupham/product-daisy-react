@@ -20,7 +20,7 @@ export default class ProductCategory extends React.Component {
       <li 
         onClick={() => this.handleClick()}
       >
-        {this.props.name}
+        {this.props.name} [{this.props.x}, {this.props.y}]
       </li>
     );
 
