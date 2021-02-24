@@ -4,7 +4,7 @@ import { fetchChildren, fetchSearch } from './api/api';
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
-import { grid } from './groupToGrid';
+import { groupToGridGroup, initGridCells } from './groupToGrid';
 import './index.css';
 
 
@@ -17,9 +17,11 @@ class App extends React.Component {
       lozenges: [],
       cart: [],
       isLoaded: false,
+      grid: initGridCells(),
     }
-    grid.init();
   }
+
+
 
   componentDidMount() {
     fetchChildren(0) // 0 is the parent of Departments
@@ -33,19 +35,38 @@ class App extends React.Component {
     fetchChildren(parentId)
     .then(data => {
       if (data.length > 0) {
-        let items = [...this.state.items.concat(data)];
-        const index = items.findIndex(item => item.id === parentId);
-        const parent = {...items[index], isOpen: true};
+        const index = this.state.items.findIndex(item => item.id === parentId);
+        const parent = {...this.state.items[index], isOpen: true};
+        const [grid, items] = groupToGridGroup(parent, data, this.state.grid, this.state.items);
+        console.log('items data',items)
+        // const grid = this.setGridCells(this.state.grid, itemsData);
+        // const items = [...this.state.items.concat(itemsData)];
         items[index] = parent;
 
         this.setState({
           items,
+          grid,
         });
 
         this.addLozenge(parent, null);
       }
     });
   };
+
+  unsetGridCells = (grid, occupiedCells) => {
+    const newGrid = [...grid];
+    occupiedCells.forEach(cell => {
+      const emptiedCell = {
+        ...newGrid[cell],
+        occupied: false,
+        pid: null,
+        parent: null,
+      };
+      newGrid[cell] = emptiedCell;
+    })
+    return newGrid; 
+  }
+
 
   addLozenge(item, query=null) {
     const lozenge = {...item};
