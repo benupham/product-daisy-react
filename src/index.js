@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { fetchChildren, fetchSearch } from './api/api';
+import { fetchChildren, fetchSearch, fetchSponsored } from './api/api';
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
@@ -18,10 +18,9 @@ class App extends React.Component {
       cart: [],
       isLoaded: false,
       grid: initGridCells(),
+      lastClicked: null,
     }
   }
-
-
 
   componentDidMount() {
     fetchChildren(0) // 0 is the parent of Departments
@@ -29,7 +28,7 @@ class App extends React.Component {
       if (data.length > 0) {
         const origin = {x: 15000, y: 15000};
         const [grid, items] = groupToGridGroup(origin, data, this.state.grid);
-        console.log('items data',items)
+        // console.log('items data',items)
 
         this.setState({
           items,
@@ -42,6 +41,14 @@ class App extends React.Component {
 
   addChildren = (parentId) => {
     fetchChildren(parentId)
+    // .then( async data => {
+    //   const sponsored = await fetchSponsored(data);
+    //   sponsored.forEach(item => {
+    //     item.id = item.id + '-sponsored';
+    //     item.sponsored = true; 
+    //   })
+    //   return [...sponsored,...data]
+    // })     
     .then(data => {
       if (data.length > 0) {
         const oldItems = [...this.state.items];
@@ -56,6 +63,7 @@ class App extends React.Component {
         this.setState({
           items,
           grid,
+          lastClicked: parent,
         });
 
         this.addLozenge(parent);
@@ -132,9 +140,8 @@ class App extends React.Component {
           searchResult.id = searchResult.id + '-' + queryId;
           searchResult.parent = queryId;
         }); 
-        
-        const origin = {x: 15000, y: 15000};
-        // TODO: Change origin to last mouseclick x y or current center of window
+        const lastClicked = this.state.lastClicked;
+        const origin = lastClicked ? {x: lastClicked.x, y: lastClicked.y} : {x: 15000, y: 15000};
         const [grid, newItems] = groupToGridGroup(origin, searchData, this.state.grid);
         //console.log('items searchData',items)
 
@@ -154,6 +161,13 @@ class App extends React.Component {
       }
 
     })
+  }
+
+  injectSponsoredCrap = async (itemsData, clickedItem, searchQuery) => {
+    const sponsoredCrap = await fetchSponsored(clickedItem, searchQuery);
+    console.log('sponsored crap', sponsoredCrap)
+    itemsData = sponsoredCrap.concat(itemsData);
+    return itemsData;
   }
 
   addToCart = (itemIndex) => {

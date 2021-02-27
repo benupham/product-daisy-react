@@ -21,7 +21,7 @@ export default class Omnibox extends React.Component {
     lozenges.reverse();
     
     return(
-      <div>
+      <div className="Omnibox">
         <h3>Omnibox</h3>
         <OmniboxSearch
           searchProducts={this.props.searchProducts}

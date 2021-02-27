@@ -1,6 +1,7 @@
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
+  margin: 0;
+  padding: 0;
 }
 
 ol, ul {
@@ -8,12 +9,31 @@ ol, ul {
 }
 
 .App {
-  display: flex;
-  justify-content: space-between;
+  display: block;
+  width: auto;
 }
 
-.ShopFloor, .Cart {
+.Omnibox, .Cart {
+  display: block;
+  position: absolute;
+}
 
+.Omnibox {
+  left: 3%;
+  top: 3%;
+}
+
+.Cart {
+  right: 3%;
+  top: 3%;
+}
+
+.ShopFloor {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
 }
 
 .active {

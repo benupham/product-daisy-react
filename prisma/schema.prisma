@@ -7,12 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model products {
-  id     Int     @id @default(autoincrement())
-  type   String
-  name   String
-  value  Int
-  img    String?
-  price  String?
-  parent Int?
+model Products {
+  id      Int     @id @default(autoincrement())
+  name    String
+  type    String
+  price   String?
+  img     String?
+  parent  Int?
+  dept    Int?
+  subdept Int?
+  value   Int?
+  sale    Int?
 }

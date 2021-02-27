@@ -17,11 +17,10 @@ export default class ProductCategory extends React.Component {
 
   render() {
     return (
-      <li 
-        onClick={() => this.handleClick()}
+      <g onClick={() => this.handleClick()} transform="translate(50,50)"
       >
-        {this.props.name} [{this.props.x}, {this.props.y}]
-      </li>
+        <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
+      </g>
     );
 
   }

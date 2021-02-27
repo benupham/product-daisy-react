@@ -38,7 +38,7 @@ export function initGridCells() {
       grid.push(cell);
     };
   };
-  console.log('grid initialized with ' + grid.length + ' cells')
+  // console.log('grid initialized with ' + grid.length + ' cells')
   return grid;
 }
 
@@ -52,7 +52,7 @@ function determineItemsGridSize(itemsType, itemsCount) {
 
   if (typeWidth > typeHeight) {
     let itemsWidthUnits = sqrt * typeWidth;
-    console.log('items',itemsCount,'totalunits', totalUnits, 'sqrt', sqrt, 'width in units',itemsWidthUnits);
+    // console.log('items',itemsCount,'totalunits', totalUnits, 'sqrt', sqrt, 'width in units',itemsWidthUnits);
     for (let i = 0; i < totalUnits; i++) {
       if (itemsWidthUnits * i * typeHeight >= totalUnits) {
         itemsGridHeight = i * typeHeight;
@@ -63,7 +63,7 @@ function determineItemsGridSize(itemsType, itemsCount) {
   } else {
     // Force item groups to be wider than tall.
     let itemsHeightUnits = Math.max(sqrt-1,1) * typeHeight;
-    console.log('items',itemsCount,'totalunits', totalUnits, 'sqrt', sqrt, 'height in units',itemsHeightUnits);
+    // console.log('items',itemsCount,'totalunits', totalUnits, 'sqrt', sqrt, 'height in units',itemsHeightUnits);
     for (let i = 0; i < totalUnits; i++) {
       if (itemsHeightUnits * i * typeWidth >= totalUnits) {
         itemsGridWidth = i * typeWidth;
@@ -90,7 +90,7 @@ export function groupToGridGroup(origin, itemsData, grid, oldItems) {
 
   // Then find the closest spot for that containing rectangle. 
   const groupGrid = findClosestPosition({x: origin.x, y: origin.y}, itemsGridWidth, itemsGridHeight, newGrid);
-  console.log('item grid',groupGrid);
+  // console.log('item grid',groupGrid);
   
   // Define the corner coordinates (bounds) of the rect of items
   const groupGridBounds = 
@@ -101,12 +101,11 @@ export function groupToGridGroup(origin, itemsData, grid, oldItems) {
     // but they may extend multiple cells right and down
     [newGrid[groupGrid[groupGrid.length-1]].x + itemsSize[0] * GRID_UNIT_SIZE, 
     newGrid[groupGrid[groupGrid.length-1]].y + itemsSize[1] * GRID_UNIT_SIZE]];   
-  console.log('grid bounds:',groupGridBounds)  
+  // console.log('grid bounds:',groupGridBounds)  
 
   // Now for each item in the group, position it
   // in an open space on the grid that is also
   // inside its shared group rect on the grid 
-  
   itemsData.forEach( item => {
     
     const type = item.type;
@@ -156,7 +155,7 @@ export function groupToGridSingle(itemData, grid, origin) {
   if (candidate) {
     addPositionData(grid, itemData, candidate);
   } else {
-    console.log('no available point found for ' + itemData);
+    // console.log('no available point found for ' + itemData);
   }
 
   return itemData; 
@@ -174,7 +173,7 @@ function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
   concentric circles from the clicked item, return
   first match, rather than search through every grid coordinate.     
   */
-  console.log('origin', origin)
+  // console.log('origin', origin)
   // Run through all the cells in the grid
   for(let cell = 0; cell < grid.length; cell++) {
     // See if the item(s) rect would fit if positioned at that cell
@@ -185,7 +184,7 @@ function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
     if (candidate && (d = sqdist2(origin, candidate, grid)) < minDist) { 
       minDist = d;
       winner = candidate;
-      if (cell % 50 === 0) {console.log('distance d', d)};
+      
     }
   }
   if (winner.length > 0) {

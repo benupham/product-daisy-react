@@ -9,48 +9,6 @@ const app = express()
 
 app.use(cors())
 
-// app.post(`/post`, async (req, res) => {
-//   const { title, content, authorEmail } = req.body
-//   const result = await prisma.post.create({
-//     data: {
-//       title,
-//       content,
-//       published: false,
-//       author: { connect: { email: authorEmail } },
-//     },
-//   })
-//   res.json(result)
-// })
-
-// app.put('/publish/:id', async (req, res) => {
-//   const { id } = req.params
-//   const post = await prisma.post.update({
-//     where: { id: Number(id) },
-//     data: { published: true },
-//   })
-//   res.json(post)
-// })
-
-// app.delete(`/post/:id`, async (req, res) => {
-//   const { id } = req.params
-//   const post = await prisma.post.delete({
-//     where: {
-//       id: Number(id),
-//     },
-//   })
-//   res.json(post)
-// })
-
-app.get(`/product/:id`, async (req, res) => {
-  const { id } = req.params
-  const product = await prisma.products.findUnique({
-    where: {
-      id: Number(id),
-    },
-  })
-  res.json(product)
-})
-
 app.get(`/children/:id`, async (req, res) => {
   const { id } = req.params
   const children = await prisma.products.findMany({
@@ -63,22 +21,39 @@ app.get(`/children/:id`, async (req, res) => {
 
 app.get(`/search`, async (req, res) => {
   const query = req.query.q
-  console.log(query)
-  const results = await prisma.products.findMany({
+  const type = req.query.type ? req.query.type : 'product'
+  const dept = req.query.dept; 
+  const sale = req.query.sale; 
+
+  const andStatement = [];
+  andStatement.push({
+    type: type,
+  });
+
+  if (query) {
+    andStatement.push({
+      name: {
+        contains: String(query),
+      },  
+    }) 
+  }
+  if (dept) {
+    andStatement.push({
+      dept: Number(dept),
+    })
+  }
+  if (sale) {
+    andStatement.push({
+      sale: Number(sale),
+    })
+  }
+  const prismaQuery = {
     take: 20,
     where: {
-      AND: [
-        {
-          name: {
-            contains: query,
-          },  
-        },
-        {
-          type: 'product',
-        }
-      ]     
+      AND: andStatement,     
     },
-  })
+  }
+  const results = await prisma.products.findMany(prismaQuery)
   res.json(results)
 })
 
