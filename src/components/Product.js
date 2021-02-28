@@ -14,11 +14,12 @@ export default class Product extends React.Component {
   render() {
     const x = this.props.x;
     const y = this.props.y; 
+    const sponsored = this.props.sponsored ? 'sponsored' : '';
 
     return (
       <g className={`Product`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
       >
-        <rect className={`wrap ${this.props.type}`}>
+        <rect className={`wrap ${this.props.type} ${sponsored}`}>
           <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
         </rect>  
       </g>

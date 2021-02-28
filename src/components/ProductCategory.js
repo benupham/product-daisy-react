@@ -19,10 +19,12 @@ export default class ProductCategory extends React.Component {
   render() {
     const x = this.props.x;
     const y = this.props.y; 
+    const sponsoredClass = this.props.sponsored ? 'sponsored' : '';
+
     return (
       <g className={`ProductCategory`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
       >
-        <rect className={`wrap ${this.props.type}`}>
+        <rect className={`wrap ${this.props.type} ${sponsoredClass}`}>
           <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
         </rect>  
       </g>

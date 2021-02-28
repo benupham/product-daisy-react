@@ -53,14 +53,14 @@ export default class ShopFloor extends React.Component {
             itemIndex={index}
             addChildren={this.props.addChildren}
             removeDescendants={this.props.removeDescendants}
-            key={item.id}
+            key={item.sponsored ? item.id+'-spon-'+Date.now() : item.id}
           />
         )
       } else {
         return (
           <Product 
             {...item} 
-            key={item.id}
+            key={item.sponsored ? item.id+'-spon-'+Date.now() : item.id}
             itemIndex={index} 
             addToCart={this.props.addToCart}
           />

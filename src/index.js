@@ -53,17 +53,18 @@ class App extends React.Component {
   }
 
   addChildren = (parentId) => {
-    fetchChildren(parentId)
-    // .then( async data => {
-    //   const sponsored = await fetchSponsored(data);
-    //   sponsored.forEach(item => {
-    //     item.id = item.id + '-sponsored';
-    //     item.sponsored = true; 
-    //   })
-    //   return [...sponsored,...data]
-    // })     
-    .then(data => {
+    fetchChildren(parentId)    
+    .then(async data => {
       if (data.length > 0) {
+        if (data[0].type === 'product') {
+          const sponsored = await fetchSponsored(data[0].dept, 'product');
+          sponsored.forEach(item => {
+            item.sponsored = true;
+            item.parent = data[0].parent; 
+          })
+          data = [...sponsored,...data]  
+        }
+  
         const oldItems = [...this.state.items];
         const index = oldItems.findIndex(item => item.id === parentId);
         const parent = {...oldItems[index], isOpen: true};
@@ -122,7 +123,6 @@ class App extends React.Component {
           this.recursiveDescedantRemoval(items, items[i].id);
         }
         if (grid) {
-          console.log('cells',items[i].cells)
           this.unsetGridCells(grid, items[i].cells)
         }
         items.splice(i, 1);

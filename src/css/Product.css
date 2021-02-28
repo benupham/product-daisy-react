@@ -5,3 +5,7 @@
   width: var(--product-width);
   height: var(--product-height);
 }
+
+.Product rect.sponsored {
+  stroke: orange;
+}

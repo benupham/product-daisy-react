@@ -38,12 +38,9 @@ export function fetchSearch(searchString) {
  
 */
 
-export function fetchSponsored(data, query) {
-  const deptId = data[0].dept ? data[0].dept : '';
-  const itemsType = data[0].type ? data[0].type : '';
-  query = query ? query : '';
-  const url = `http://localhost:3001/search?q=${query}&sale=1&dept=${deptId}&type=${itemsType}`
-  console.log('sponsored url',url)
+export function fetchSponsored(deptId='', type='', query='') {
+  const url = `http://localhost:3001/search?q=${query}&sale=1&dept=${deptId}&type=${type}`
+  console.log(url)
   return fetch(url, options)
   .then(res => {
     if (res.ok) {
