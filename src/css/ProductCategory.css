@@ -1,0 +1,20 @@
+.ProductCategory rect.wrap {
+  stroke: black;
+  stroke-width: 3px;
+  fill: white;
+}
+
+.ProductCategory rect.dept {
+  width: var(--dept-width);
+  height: var(--dept-height);
+}
+
+.ProductCategory rect.subdept {
+  width: var(--subdept-width);
+  height: var(--subdept-height);
+}
+
+.ProductCategory rect.brand {
+  width: var(--brand-width);
+  height: var(--brand-height);
+}

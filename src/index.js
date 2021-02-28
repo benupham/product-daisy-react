@@ -6,6 +6,7 @@ import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
 import { groupToGridGroup, initGridCells } from './groupToGrid';
 import './index.css';
+import { zoomToBounds } from './zoom';
 
 
 class App extends React.Component {
@@ -34,7 +35,10 @@ class App extends React.Component {
           items,
           grid,
           isLoaded: true,
-        });      
+        });
+        
+        const bounds = items[0].groupGridBounds;
+        zoomToBounds(bounds, 100);
       }
     });
   }
@@ -56,7 +60,6 @@ class App extends React.Component {
         const parent = {...oldItems[index], isOpen: true};
         // TODO: Change parent (origin) to mouseclick x y 
         const [grid, newItems] = groupToGridGroup(parent, data, this.state.grid);
-        console.log('items data',newItems)
         const items = [...oldItems, ...newItems];
         items[index] = parent;
 
@@ -66,13 +69,16 @@ class App extends React.Component {
           lastClicked: parent,
         });
 
-        this.addLozenge(parent);
+        const bounds = newItems[0].groupGridBounds;
+        zoomToBounds(bounds);
+        
+        this.addLozenge(parent, bounds);
       }
     });
   };
 
-  addLozenge(item) {
-    const lozenge = {...item};
+  addLozenge(item, bounds) {
+    const lozenge = {childrenBounds: bounds, ...item};
     this.setState({ 
       lozenges: this.state.lozenges.concat([lozenge]), 
     });  

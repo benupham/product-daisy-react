@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/ProductCategory.css';
 
 export default class ProductCategory extends React.Component {
 
@@ -16,10 +17,14 @@ export default class ProductCategory extends React.Component {
   }
 
   render() {
+    const x = this.props.x;
+    const y = this.props.y; 
     return (
-      <g onClick={() => this.handleClick()} transform="translate(50,50)"
+      <g className={`ProductCategory`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
       >
-        <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
+        <rect className={`wrap ${this.props.type}`}>
+          <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
+        </rect>  
       </g>
     );
 

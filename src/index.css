@@ -1,3 +1,16 @@
+:root {
+  --dept-width: 600px;
+  --dept-height: 400px;
+  --subdept-width: 400px;
+  --subdept-height: 200px;
+  --brand-width: 400px;
+  --brand-height: 200px;
+  --product-width: 200px;
+  --product-height: 400px;
+
+  
+}
+
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
   margin: 0;

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/Product.css';
 
 export default class Product extends React.Component {
 
@@ -11,11 +12,16 @@ export default class Product extends React.Component {
   }
 
   render() {
+    const x = this.props.x;
+    const y = this.props.y; 
+
     return (
-      <li className="Product">
-        <h3 className="Product-name">{this.props.name} [{this.props.x}, {this.props.y}]</h3>
-        <AddToCartButton onClick={() => this.props.addToCart(this.props.itemIndex)} />
-      </li>
+      <g className={`Product`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
+      >
+        <rect className={`wrap ${this.props.type}`}>
+          <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
+        </rect>  
+      </g>
     )  
   }
 }

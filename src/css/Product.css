@@ -1,0 +1,7 @@
+.Product rect.wrap {
+  stroke: rgba(28, 197, 98, 0.863);
+  stroke-width: 3px;
+  fill: white;
+  width: var(--product-width);
+  height: var(--product-height);
+}

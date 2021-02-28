@@ -2,12 +2,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import Product from './Product';
 import ProductCategory from './ProductCategory';
-import { GRID_WIDTH, GRID_UNIT_SIZE, GRID_HEIGHT } from '../constants' ;
-
-const initialScale = 0.5
-const zoomWidth = -((GRID_WIDTH * GRID_UNIT_SIZE) * (1-initialScale)/2);
-const zoomHeight = -((GRID_HEIGHT * GRID_UNIT_SIZE) * (1-initialScale)/2);
-const initialZoom = d3.zoomIdentity.translate(zoomWidth, zoomHeight).scale(initialScale);
+import { setUpZoom } from '../zoom';
 
 export default class ShopFloor extends React.Component {
   constructor(props) {
@@ -16,12 +11,6 @@ export default class ShopFloor extends React.Component {
     this.gRef = React.createRef();
 
     this.state= {
-      viewBox: {x:0,y:0,w:500,h:500},
-      svgSize: {w: 500, h: 500},
-      scale: 1,
-      isPanning: false, 
-      startPoint: {x:0,y:0},
-      endPoint: {x:0,y:0},
       container: {width: 1000, height: 1000},
     }
   }
@@ -34,8 +23,7 @@ export default class ShopFloor extends React.Component {
       container: {width, height},
     })
 
-    const svg = d3.select(this.svgRef.current);
-    svg.call(this.handleZoom).call(this.handleZoom.transform, initialZoom);
+    setUpZoom(this.svgRef.current, this.gRef.current);
   }
   
   componentWillUnmount() {
