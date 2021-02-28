@@ -34,9 +34,19 @@ class App extends React.Component {
           items,
           grid,
           isLoaded: true,
+          lastClicked: items[0],
         });
-        
+
         const bounds = items[0].groupGridBounds;
+        const lozenge = {
+          type: 'store',
+          id: 0,
+          name: `All Departments`,
+          parent: null,
+          qty: null,
+          groupGridBounds: bounds, 
+        }        
+        this.addLozenge(lozenge, bounds);
         zoomToBounds(bounds, 100);
       }
     });
@@ -161,8 +171,10 @@ class App extends React.Component {
           name: `"${searchQuery}"`,
           parent: null,
           qty: searchData.length,
+          groupGridBounds: lastClicked.groupGridBounds, //this won't work if a search is done first
         }
         const bounds = newItems[0].groupGridBounds;
+        zoomToBounds(bounds);
         this.addLozenge(lozenge, bounds);
       }
 
