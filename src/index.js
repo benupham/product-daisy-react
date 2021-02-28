@@ -29,7 +29,6 @@ class App extends React.Component {
       if (data.length > 0) {
         const origin = {x: 15000, y: 15000};
         const [grid, items] = groupToGridGroup(origin, data, this.state.grid);
-        // console.log('items data',items)
 
         this.setState({
           items,
@@ -163,7 +162,8 @@ class App extends React.Component {
           parent: null,
           qty: searchData.length,
         }
-        this.addLozenge(lozenge);
+        const bounds = newItems[0].groupGridBounds;
+        this.addLozenge(lozenge, bounds);
       }
 
     })
