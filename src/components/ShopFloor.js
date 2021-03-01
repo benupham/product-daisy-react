@@ -2,6 +2,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import Product from './Product';
 import ProductCategory from './ProductCategory';
+import ProductCategoryOverlay from './ProductCategoryOverlay';
 import { setUpZoom } from '../zoom';
 
 export default class ShopFloor extends React.Component {
@@ -53,14 +54,14 @@ export default class ShopFloor extends React.Component {
             itemIndex={index}
             addChildren={this.props.addChildren}
             removeDescendants={this.props.removeDescendants}
-            key={item.sponsored ? item.id+'-spon-'+Date.now() : item.id}
+            key={item.id}
           />
         )
       } else {
         return (
           <Product 
             {...item} 
-            key={item.sponsored ? item.id+'-spon-'+Date.now() : item.id}
+            key={item.id}
             itemIndex={index} 
             addToCart={this.props.addToCart}
           />
@@ -68,6 +69,7 @@ export default class ShopFloor extends React.Component {
       }
     }
     );
+    const bounds = items[0] ? items[0].props.groupGridBounds : [];
 
     return (
       <div className="ShopFloor">
@@ -75,6 +77,7 @@ export default class ShopFloor extends React.Component {
           width={this.state.container.width} height={this.state.container.height} 
           ref={this.svgRef}>
           <g className="zoomContainer" ref={this.gRef}>
+            <ProductCategoryOverlay bounds={bounds} />
             {items}
           </g> 
         </svg>

@@ -23,8 +23,10 @@ app.get(`/search`, async (req, res) => {
   const query = req.query.q
   const type = req.query.type ? req.query.type : 'product'
   const dept = req.query.dept; 
-  const sale = req.query.sale; 
-
+  const subdept = req.query.subdept;
+  const sale = req.query.sale;
+  const qty = req.query.qty ? req.query.qty : 20; 
+  
   const andStatement = [];
   andStatement.push({
     type: type,
@@ -42,17 +44,23 @@ app.get(`/search`, async (req, res) => {
       dept: Number(dept),
     })
   }
+  if (subdept) {
+    andStatement.push({
+      subdept: Number(subdept),
+    })
+  }
   if (sale) {
     andStatement.push({
       sale: Number(sale),
     })
   }
   const prismaQuery = {
-    take: 20,
+    take: Number(qty),
     where: {
       AND: andStatement,     
     },
   }
+  console.log(prismaQuery)
   const results = await prisma.products.findMany(prismaQuery)
   res.json(results)
 })

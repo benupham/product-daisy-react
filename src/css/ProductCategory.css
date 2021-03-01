@@ -22,3 +22,7 @@
 .ProductCategory rect.sponsored {
   stroke: orange;
 }
+
+.ProductCategory rect.open {
+  fill: red;
+}

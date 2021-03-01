@@ -8,14 +8,20 @@ const zoomHeight = -((GRID_HEIGHT * GRID_UNIT_SIZE) * (1-initialScale)/2) + 1000
 // const initialZoom = d3.zoomIdentity.translate(zoomWidth, zoomHeight).scale(initialScale);
 
 let svg, g; 
+export const d3var = {};
 
 export function setUpZoom(zoomContainerNode, zoomedNode) {
   svg = d3.select(zoomContainerNode);
   g = d3.select(zoomedNode);
-  svg.call(handleZoom)//.call(handleZoom.transform, initialZoom);
+  svg.call(handleZoom);
+  g.on('click', function() {
+    console.log('svg coor click', d3.mouse(this))
+    // Quick and dirty passing to React of SVG coord
+    d3var.clicked = d3.mouse(this);
+  })
 }
 
-const handleZoom = d3.zoom().on('zoom', e => {
+const handleZoom = d3.zoom().scaleExtent([0.1,7]).translateExtent([[5000,5000],[20000,20000]]).on('zoom', e => {
   g.attr('transform', d3.event.transform)
 });
 

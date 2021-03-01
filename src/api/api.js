@@ -38,8 +38,8 @@ export function fetchSearch(searchString) {
  
 */
 
-export function fetchSponsored(deptId='', type='', query='') {
-  const url = `http://localhost:3001/search?q=${query}&sale=1&dept=${deptId}&type=${type}`
+export function fetchSponsored(deptId='', subdept='', type='', query='', qty='') {
+  const url = `http://localhost:3001/search?q=${query}&sale=1&dept=${deptId}&subdept=${subdept}&type=${type}&qty=${qty}`
   console.log(url)
   return fetch(url, options)
   .then(res => {

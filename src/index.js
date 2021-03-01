@@ -52,24 +52,20 @@ class App extends React.Component {
     });
   }
 
-  addChildren = (parentId) => {
+  addChildren = (parentId, clickPos) => {
     fetchChildren(parentId)    
     .then(async data => {
       if (data.length > 0) {
         if (data[0].type === 'product') {
-          const sponsored = await fetchSponsored(data[0].dept, 'product');
-          sponsored.forEach(item => {
-            item.sponsored = true;
-            item.parent = data[0].parent; 
-          })
-          data = [...sponsored,...data]  
+          data = await this.injectSponsoredCrap(data);
         }
   
         const oldItems = [...this.state.items];
         const index = oldItems.findIndex(item => item.id === parentId);
         const parent = {...oldItems[index], isOpen: true};
         // TODO: Change parent (origin) to mouseclick x y 
-        const [grid, newItems] = groupToGridGroup(parent, data, this.state.grid);
+        const origin = clickPos ? {x: clickPos[0], y: clickPos[1]} : parent; 
+        const [grid, newItems] = groupToGridGroup(origin, data, this.state.grid);
         const items = [...oldItems, ...newItems];
         items[index] = parent;
 
@@ -149,8 +145,10 @@ class App extends React.Component {
     const timestamp = Date.now();
     const queryId = searchQuery + '-' + timestamp;
     fetchSearch(searchQuery)
-    .then(searchData => {
+    .then(async searchData => {
       if (searchData.length > 0) {
+        console.log('initial results',searchData)
+        searchData = await this.injectSponsoredCrap(searchData);
         searchData.forEach(searchResult => {
           searchResult.id = searchResult.id + '-' + queryId;
           searchResult.parent = queryId;
@@ -158,7 +156,6 @@ class App extends React.Component {
         const lastClicked = this.state.lastClicked;
         const origin = lastClicked ? {x: lastClicked.x, y: lastClicked.y} : {x: 15000, y: 15000};
         const [grid, newItems] = groupToGridGroup(origin, searchData, this.state.grid);
-        //console.log('items searchData',items)
 
         this.setState({
           items: this.state.items.concat(newItems),
@@ -181,11 +178,15 @@ class App extends React.Component {
     })
   }
 
-  injectSponsoredCrap = async (itemsData, clickedItem, searchQuery) => {
-    const sponsoredCrap = await fetchSponsored(clickedItem, searchQuery);
-    console.log('sponsored crap', sponsoredCrap)
-    itemsData = sponsoredCrap.concat(itemsData);
-    return itemsData;
+  injectSponsoredCrap = async (data) => {
+    const qty = data.length > 3 ? 3 : data.length;
+    const sponsored = await fetchSponsored('', data[0].subdept, 'product', '', qty);
+    sponsored.forEach(item => {
+      item.sponsored = true;
+      item.parent = data[0].parent;
+      item.id = item.id + '-spon-' + Date.now(); 
+    })
+    return [...data,...sponsored];
   }
 
   addToCart = (itemIndex) => {
