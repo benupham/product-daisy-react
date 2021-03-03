@@ -19,9 +19,8 @@ export default class Product extends React.Component {
     return (
       <g className={`Product`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
       >
-        <rect className={`wrap ${this.props.type} ${sponsored}`}>
-          <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
-        </rect>  
+        <rect className={`wrap ${this.props.type} ${sponsored}`} />            
+        <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
       </g>
     )  
   }

@@ -1,22 +1,24 @@
 .ProductCategory rect.wrap {
   stroke: black;
-  stroke-width: 3px;
+  stroke-width: 1px;
   fill: white;
+  fill: white;
+  transform: translate(calc(var(--unit-margin) / 2), calc(var(--unit-margin) / 2));
 }
 
 .ProductCategory rect.dept {
-  width: var(--dept-width);
-  height: var(--dept-height);
+  width: calc(var(--dept-width) - var(--unit-margin));
+  height: calc(var(--dept-height) - var(--unit-margin));
 }
 
 .ProductCategory rect.subdept {
-  width: var(--subdept-width);
-  height: var(--subdept-height);
+  width: calc(var(--subdept-width) - var(--unit-margin));
+  height: calc(var(--subdept-height) - var(--unit-margin));
 }
 
 .ProductCategory rect.brand {
-  width: var(--brand-width);
-  height: var(--brand-height);
+  width: calc(var(--brand-width) - var(--unit-margin));
+  height: calc(var(--brand-height) - var(--unit-margin));
 }
 
 .ProductCategory rect.sponsored {

@@ -4,6 +4,7 @@ import { fetchChildren, fetchSearch, fetchSponsored } from './api/api';
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
+import { renderCSSVariables } from './constants';
 import { groupToGridGroup, initGridCells } from './groupToGrid';
 import './index.css';
 import { zoomToBounds } from './zoom';
@@ -24,6 +25,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const globalCSSVariables = renderCSSVariables();
     fetchChildren(0) // 0 is the parent of Departments
     .then(data => {
       if (data.length > 0) {
@@ -205,6 +207,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+      <style>
+        {renderCSSVariables()}
+      </style>
         <Omnibox 
           items={this.state.items} 
           removeDescendants={this.removeDescendants}

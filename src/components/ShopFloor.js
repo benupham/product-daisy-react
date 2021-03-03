@@ -77,7 +77,7 @@ export default class ShopFloor extends React.Component {
           width={this.state.container.width} height={this.state.container.height} 
           ref={this.svgRef}>
           <g className="zoomContainer" ref={this.gRef}>
-            <ProductCategoryOverlay bounds={bounds} />
+            {/* <ProductCategoryOverlay bounds={bounds} /> */}
             {items}
           </g> 
         </svg>

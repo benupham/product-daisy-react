@@ -1,11 +1,39 @@
 .Product rect.wrap {
   stroke: rgba(28, 197, 98, 0.863);
-  stroke-width: 3px;
+  stroke-width: 1px;
   fill: white;
-  width: var(--product-width);
-  height: var(--product-height);
+  width: calc(var(--product-width) - var(--unit-margin));
+  height: calc(var(--product-height) - var(--unit-margin));
+  transform: translate(calc(var(--unit-margin) / 2), calc(var(--unit-margin) / 2));
 }
 
 .Product rect.sponsored {
   stroke: orange;
 }
+
+.Product img {
+  width: calc(var(--product-width) - var(--unit-margin));
+  height: calc(var(--product-width) - var(--unit-margin));
+  transform: translate(calc(var(--unit-margin) / 2), calc(var(--unit-margin) / 2)); 
+}
+
+.Product text {
+  transform: translate(var(--unit-margin), calc(var(--unit-height)*2 + var(--unit-margin)));
+  fill: black;
+  font-size: 36px;
+  text-anchor: start;
+}
+/* 
+export const rectPosition = {
+  "product" : [UNIT_MARGIN/2,UNIT_MARGIN/2],
+  "brand" : [UNIT_MARGIN/2,UNIT_MARGIN/2],
+  "subdept" : [UNIT_MARGIN/2,UNIT_MARGIN/2],
+  "dept" : [UNIT_MARGIN/2,UNIT_MARGIN/2]
+}
+
+export const rectSize = {
+  "product" : [typePixelSize["product"][0] - UNIT_MARGIN, typePixelSize["product"][1] - UNIT_MARGIN],
+  "brand" : [typePixelSize["brand"][0] - UNIT_MARGIN, typePixelSize["brand"][1] - UNIT_MARGIN],
+  "subdept" : [typePixelSize["subdept"][0] - UNIT_MARGIN, typePixelSize["subdept"][1] - UNIT_MARGIN],
+  "dept" : [typePixelSize["dept"][0] - UNIT_MARGIN, typePixelSize["dept"][1] - UNIT_MARGIN]
+} */

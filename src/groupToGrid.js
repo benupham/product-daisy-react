@@ -29,8 +29,8 @@ export function initGridCells() {
     for(let j = 0; j < GRID_HEIGHT; j++) {
       let cell;
       cell = {
-        x : i * GRID_UNIT_SIZE,
-        y : j * GRID_UNIT_SIZE,
+        x : i * GRID_UNIT_SIZE[0],
+        y : j * GRID_UNIT_SIZE[1],
         occupied : false,
         pid: null,
         parent: null
@@ -99,8 +99,8 @@ export function groupToGridGroup(origin, itemsData, grid, oldItems) {
     // this bottom corner of the bounds takes account
     // of the fact that item's position is their upper left corner
     // but they may extend multiple cells right and down
-    [newGrid[groupGrid[groupGrid.length-1]].x + itemsSize[0] * GRID_UNIT_SIZE, 
-    newGrid[groupGrid[groupGrid.length-1]].y + itemsSize[1] * GRID_UNIT_SIZE]];   
+    [newGrid[groupGrid[groupGrid.length-1]].x + itemsSize[0] * GRID_UNIT_SIZE[0], 
+    newGrid[groupGrid[groupGrid.length-1]].y + itemsSize[1] * GRID_UNIT_SIZE[1]]];   
   // console.log('grid bounds:',groupGridBounds)  
 
   // Now for each item in the group, position it

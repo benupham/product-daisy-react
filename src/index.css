@@ -1,18 +1,20 @@
-:root {
-  --dept-width: 600px;
-  --dept-height: 400px;
-  --subdept-width: 400px;
-  --subdept-height: 200px;
-  --brand-width: 400px;
-  --brand-height: 200px;
-  --product-width: 200px;
-  --product-height: 400px;
+/* :root {
+  --unit-width: 200px;
+  --unit-height: 170px;
+  --dept-width: calc(3 * var(--unit-width));
+  --dept-height: calc(2 * var(--unit-height));
+  --subdept-width: calc(2 * var(--unit-width));
+  --subdept-height: var(--unit-height);
+  --brand-width: calc(2 * var(--unit-width));
+  --brand-height: var(--unit-height);
+  --product-width: var(--unit-width);
+  --product-height: calc(2 * var(--unit-height));
 
   
-}
+} */
 
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+  font-family: Lato, Roboto, Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
 }
