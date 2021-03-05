@@ -10,11 +10,11 @@ export default class Overlay extends React.Component {
     let x, y, width, height;
     if (this.props.bounds !== undefined && this.props.bounds.length > 0) {
       const bounds = this.props.bounds;
-      console.log(bounds); 
+       
       x = bounds[0][0];
       y = bounds[0][1];  
-      width = bounds[1][1] - x - GRID_UNIT_SIZE[0];
-      height = bounds[1][1] - y - GRID_UNIT_SIZE[1];
+      width = Math.abs(bounds[1][0] - x);
+      height = Math.abs(bounds[1][1] - y);
     }
 
     return (

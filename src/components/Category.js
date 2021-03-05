@@ -8,7 +8,7 @@ export default class Category extends React.Component {
     const isOpen = this.props.isOpen;
     const itemId = this.props.id;
     const clicked = d3var.clicked;
-    console.log(clicked)
+    
     if (isOpen) {
       this.props.removeDescendants(itemId);
     } else {

@@ -71,15 +71,16 @@ class App extends React.Component {
         const origin = clickPos ? {x: clickPos[0], y: clickPos[1]} : parent; 
         const [grid, newItems, titleBar] = groupToGridGroup(origin, data, this.state.grid, parent);
         const items = [...oldItems, ...newItems];
+        const titleBars = [...this.state.titleBars, ...titleBar];
         items[index] = parent;
 
         this.setState({
           items,
           grid,
-          titleBars: this.state.titleBars.concat(titleBar),
+          titleBars,
           lastClicked: parent,
         });
-
+        console.log('items, titlebars',items,titleBars)
         const bounds = newItems[0].groupGridBounds;
         zoomToBounds(bounds);
         
@@ -96,8 +97,12 @@ class App extends React.Component {
   }
 
   removeDescendants = (parentId) => {
+    if (parentId === 0) return;
     // This may need to be a deep copy to avoid state mutants
     const items = [...this.state.items];
+    const titleBar = this.state.titleBars.filter(tb => tb.id === parentId)[0];
+    const titleBars = this.state.titleBars.filter(tb => tb.id !== parentId);
+    console.log('titlebar',titleBar)
     const lozenges = this.state.lozenges.filter(loz => loz.id !== parentId);
     const parentIndex = items.findIndex(item => item.id === parentId);
     // This is a category we're removing, not search results
@@ -107,13 +112,17 @@ class App extends React.Component {
       items[parentIndex] = parent;
     }
     const grid = [...this.state.grid];
-
+    
+    this.recursiveDescedantRemoval(titleBars, parentId, grid);
+    this.unsetGridCells(grid,titleBar.cells);
     this.recursiveDescedantRemoval(items, parentId, grid);
     this.recursiveDescedantRemoval(lozenges, parentId);
+
     this.setState({
       items,
       lozenges,
-      grid
+      grid,
+      titleBars,
     })  
   }
   // TODO: Issues with removing search items and unsetting grid

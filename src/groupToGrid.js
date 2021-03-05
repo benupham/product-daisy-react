@@ -20,10 +20,6 @@ TO DO
 
 */
 
-
-
-
-
 export function initGridCells() {
   const grid = [];
   for(let i = 0; i < GRID_WIDTH; i++) {
@@ -96,7 +92,7 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
   // Calculate the size of the rect to contain
   // all the items returned 
   const [itemsGridWidth, itemsGridHeight] = determineItemsGridSize(itemsType, itemsData.length);
-
+  
   // Then find the closest spot for that containing rectangle. 
   const groupGrid = findClosestPosition({x: origin.x, y: origin.y}, itemsGridWidth, itemsGridHeight, newGrid);
   // console.log('item grid',groupGrid);
@@ -108,24 +104,25 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
     // this bottom corner of the bounds takes account
     // of the fact that item's position is their upper left corner
     // but they may extend multiple cells right and down
-    [newGrid[groupGrid[groupGrid.length-1]].x + itemsSize[0] * GRID_UNIT_SIZE[0], 
-    newGrid[groupGrid[groupGrid.length-1]].y + itemsSize[1] * GRID_UNIT_SIZE[1]]];   
-  console.log('grid bounds:',groupGridBounds)  
+    [newGrid[groupGrid[groupGrid.length-1]].x + GRID_UNIT_SIZE[0], 
+    newGrid[groupGrid[groupGrid.length-1]].y + GRID_UNIT_SIZE[1]]];   
+   
 
   // Occupy the top row of this group grid 
   // so we can put the title bar there
   const titleBar = {
-    id: `${parent.id}-title`,
-    parent: parent.id,
+    id: parent.id,
+    parent: parent.parent,
     name: parent.name,
     bounds: groupGridBounds,
+    isOpen: true,
   }
   titleBar.cells = groupGrid.filter( (cell, index) => {
     return index % itemsGridHeight === 0
   })
   titleBar.x = newGrid[titleBar.cells[0]].x;
   titleBar.y = newGrid[titleBar.cells[0]].y;
-  console.log(titleBar)
+  
   setGridCells(newGrid,titleBar);
   
   // Now for each item in the group, position it

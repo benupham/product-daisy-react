@@ -8,8 +8,8 @@ const UNIT_MARGIN = 25;
 
 export const typeSize = {
   "product" : [2,4],
-  "brand" : [4,2],
-  "subdept" : [3,1],
+  "brand" : [3,2],
+  "subdept" : [4,2],
   "dept" : [3,3]
 }
 
