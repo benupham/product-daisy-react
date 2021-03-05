@@ -1,3 +1,4 @@
+import { group } from "d3";
 import { GRID_WIDTH, GRID_HEIGHT, GRID_UNIT_SIZE, typeSize } from "./constants";
 
 /* 
@@ -42,6 +43,12 @@ export function initGridCells() {
   return grid;
 }
 
+/* 
+Given a # of items, determine the rectangle
+width and height they will fit into, based on
+their type width/height. 
+...plus a title bar 
+*/
 function determineItemsGridSize(itemsType, itemsCount) {
   let typeWidth = typeSize[itemsType][0];
   let typeHeight = typeSize[itemsType][1];
@@ -72,6 +79,8 @@ function determineItemsGridSize(itemsType, itemsCount) {
       } 
     }
   }
+  // Add 1 to the height for the title bar
+  itemsGridHeight++;
   return [itemsGridWidth, itemsGridHeight];
 }
 
@@ -79,7 +88,7 @@ function determineItemsGridSize(itemsType, itemsCount) {
 // on the grid so they are grouped together
 // and close to their parent category item 
 // return the updated items data
-export function groupToGridGroup(origin, itemsData, grid, oldItems) {
+export function groupToGridGroup(origin, itemsData, grid, parent) {
   
   const newGrid = [...grid];
   const itemsType = itemsData[0].type; 
@@ -101,8 +110,24 @@ export function groupToGridGroup(origin, itemsData, grid, oldItems) {
     // but they may extend multiple cells right and down
     [newGrid[groupGrid[groupGrid.length-1]].x + itemsSize[0] * GRID_UNIT_SIZE[0], 
     newGrid[groupGrid[groupGrid.length-1]].y + itemsSize[1] * GRID_UNIT_SIZE[1]]];   
-  // console.log('grid bounds:',groupGridBounds)  
+  console.log('grid bounds:',groupGridBounds)  
 
+  // Occupy the top row of this group grid 
+  // so we can put the title bar there
+  const titleBar = {
+    id: `${parent.id}-title`,
+    parent: parent.id,
+    name: parent.name,
+    bounds: groupGridBounds,
+  }
+  titleBar.cells = groupGrid.filter( (cell, index) => {
+    return index % itemsGridHeight === 0
+  })
+  titleBar.x = newGrid[titleBar.cells[0]].x;
+  titleBar.y = newGrid[titleBar.cells[0]].y;
+  console.log(titleBar)
+  setGridCells(newGrid,titleBar);
+  
   // Now for each item in the group, position it
   // in an open space on the grid that is also
   // inside its shared group rect on the grid 
@@ -123,8 +148,8 @@ export function groupToGridGroup(origin, itemsData, grid, oldItems) {
       } 
     }
   })
-  
-  return [newGrid, itemsData]; 
+  // console.log('the grid',newGrid)
+  return [newGrid, itemsData, [titleBar]]; 
 
 }
 
@@ -239,7 +264,6 @@ function addPositionData(grid, itemData, locationCells, groupCell = null, groupG
   // the cells occupied by the item
   itemData.cells = locationCells;
 
-  
   if (groupCell) {
     itemData.x = grid[groupCell].x;
     itemData.y = grid[groupCell].y;
@@ -248,8 +272,6 @@ function addPositionData(grid, itemData, locationCells, groupCell = null, groupG
     itemData.x = grid[locationCells[0]].x;
     itemData.y = grid[locationCells[0]].y;
   }
-  itemData.ix = itemData.x;
-  itemData.iy = itemData.y;
 
   return itemData;
 }

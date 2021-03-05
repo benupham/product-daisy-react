@@ -1,9 +1,8 @@
 import React from 'react';
-import * as d3 from 'd3';
-import '../css/ProductCategory.css';
+//import '../css/CategoryTitleBar.css';
 import { d3var } from '../zoom';
 
-export default class ProductCategory extends React.Component {
+export default class CategoryTitleBar extends React.Component {
 
   handleClick = e => {
     const isOpen = this.props.isOpen;
@@ -25,7 +24,7 @@ export default class ProductCategory extends React.Component {
     const open = this.props.isOpen ? 'open' : '';
 
     return (
-      <g className={`ProductCategory`} onClick={e => this.handleClick(e)} transform={`translate(${x}, ${y})`}
+      <g className={`Category`} onClick={e => this.handleClick(e)} transform={`translate(${x}, ${y})`}
       >
         <rect className={`wrap ${this.props.type} ${sponsoredClass + ' ' + open}`}>
           <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>

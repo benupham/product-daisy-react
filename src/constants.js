@@ -70,10 +70,10 @@ export const rectFilter = {
 }
 
 export const nameFontSize = {
-  "product" : 18,
-  "brand" : 24,
-  "subdept" : 30,
-  "dept" : 42
+  "product" : 18 * typeSize.product[0],
+  "brand" : 24 * typeSize.brand[0],
+  "subdept" : 30 * typeSize.subdept[0],
+  "dept" : 42 * typeSize.dept[0]
 }
 
 export const nameAnchor = {

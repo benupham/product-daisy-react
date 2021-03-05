@@ -17,6 +17,7 @@ class App extends React.Component {
       items: [],
       promoItems: [],
       lozenges: [],
+      titleBars: [],
       cart: [],
       isLoaded: false,
       grid: initGridCells(),
@@ -30,11 +31,12 @@ class App extends React.Component {
     .then(data => {
       if (data.length > 0) {
         const origin = {x: 15000, y: 15000};
-        const [grid, items] = groupToGridGroup(origin, data, this.state.grid);
+        const [grid, items, titleBars] = groupToGridGroup(origin, data, this.state.grid,{id: 0, name: 'All Departments'});
 
         this.setState({
           items,
           grid,
+          titleBars,
           isLoaded: true,
           lastClicked: items[0],
         });
@@ -67,13 +69,14 @@ class App extends React.Component {
         const parent = {...oldItems[index], isOpen: true};
         // TODO: Change parent (origin) to mouseclick x y 
         const origin = clickPos ? {x: clickPos[0], y: clickPos[1]} : parent; 
-        const [grid, newItems] = groupToGridGroup(origin, data, this.state.grid);
+        const [grid, newItems, titleBar] = groupToGridGroup(origin, data, this.state.grid, parent);
         const items = [...oldItems, ...newItems];
         items[index] = parent;
 
         this.setState({
           items,
           grid,
+          titleBars: this.state.titleBars.concat(titleBar),
           lastClicked: parent,
         });
 
@@ -219,6 +222,7 @@ class App extends React.Component {
         <ShopFloor 
           items={this.state.items} 
           promoItems={this.state.promoItems}
+          titleBars={this.state.titleBars}
           addChildren={this.addChildren} 
           removeDescendants={this.removeDescendants}
           addToCart={this.addToCart}

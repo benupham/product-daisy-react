@@ -1,6 +1,7 @@
 import React from 'react';
+import { GRID_UNIT_SIZE } from '../constants';
 
-export default class ProductCategoryOverlay extends React.Component {
+export default class Overlay extends React.Component {
   // constructor(props) {
   //   super(props);
   // }
@@ -12,8 +13,8 @@ export default class ProductCategoryOverlay extends React.Component {
       console.log(bounds); 
       x = bounds[0][0];
       y = bounds[0][1];  
-      width = bounds[1][1] - x;
-      height = bounds[1][1] - y;
+      width = bounds[1][1] - x - GRID_UNIT_SIZE[0];
+      height = bounds[1][1] - y - GRID_UNIT_SIZE[1];
     }
 
     return (

@@ -1,4 +1,4 @@
-.ProductCategory rect.wrap {
+.Category rect.wrap {
   stroke: black;
   stroke-width: 1px;
   fill: white;
@@ -6,25 +6,25 @@
   transform: translate(calc(var(--unit-margin) / 2), calc(var(--unit-margin) / 2));
 }
 
-.ProductCategory rect.dept {
+.Category rect.dept {
   width: calc(var(--dept-width) - var(--unit-margin));
   height: calc(var(--dept-height) - var(--unit-margin));
 }
 
-.ProductCategory rect.subdept {
+.Category rect.subdept {
   width: calc(var(--subdept-width) - var(--unit-margin));
   height: calc(var(--subdept-height) - var(--unit-margin));
 }
 
-.ProductCategory rect.brand {
+.Category rect.brand {
   width: calc(var(--brand-width) - var(--unit-margin));
   height: calc(var(--brand-height) - var(--unit-margin));
 }
 
-.ProductCategory rect.sponsored {
+.Category rect.sponsored {
   stroke: orange;
 }
 
-.ProductCategory rect.open {
+.Category rect.open {
   fill: red;
 }

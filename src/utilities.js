@@ -1,14 +1,13 @@
 import * as d3plus from 'd3plus-text';
-import * as d3 from 'd3';
 import { nameFontSize, nameWidth } from './constants';                      
 
-export function wrapName(item, name, type) {
-  const container = d3.select(item);
-  console.log(container)
+export function wrapName(node, name, type) {
   new d3plus.TextBox()
-    .data([{text: name, width: nameWidth[type]}])
-    // .fontSize(nameFontSize[type])
-    .select(item)
+    .data([{text: name}])
+    .fontSize(nameFontSize[type])
+    .width(nameWidth[type])
+    .padding('10px 15px')
+    .select(node)
     .render();
 }
 

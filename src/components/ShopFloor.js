@@ -1,8 +1,8 @@
 import React from 'react';
 import * as d3 from 'd3';
 import Product from './Product';
-import ProductCategory from './ProductCategory';
-import ProductCategoryOverlay from './ProductCategoryOverlay';
+import Category from './Category';
+import Overlay from './Overlay';
 import { setUpZoom } from '../zoom';
 
 export default class ShopFloor extends React.Component {
@@ -49,7 +49,7 @@ export default class ShopFloor extends React.Component {
     const items = this.props.items.map((item, index) => {
       if (item.type !== 'product') {
         return (
-          <ProductCategory  
+          <Category  
             {...item}
             itemIndex={index}
             addChildren={this.props.addChildren}
@@ -69,7 +69,15 @@ export default class ShopFloor extends React.Component {
       }
     }
     );
-    const bounds = items[0] ? items[0].props.groupGridBounds : [];
+    const titles = this.props.titleBars.map((title, index) => {
+      return (
+        <Overlay
+            {...title}
+            itemIndex={index}
+            key={title.id} 
+        />    
+      )
+    })
 
     return (
       <div className="ShopFloor">
@@ -77,7 +85,7 @@ export default class ShopFloor extends React.Component {
           width={this.state.container.width} height={this.state.container.height} 
           ref={this.svgRef}>
           <g className="zoomContainer" ref={this.gRef}>
-            {/* <ProductCategoryOverlay bounds={bounds} /> */}
+            {titles}
             {items}
           </g> 
         </svg>

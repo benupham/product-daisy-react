@@ -29,9 +29,7 @@ export default class Product extends React.Component {
     return (
       <g ref={this.nameRef} className={`Product`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
       >
-        <rect className={`wrap ${this.props.type} ${sponsored}`} />
-        <rect className={`name`} height="150px" width="150px" />            
-        <text >{this.props.name}</text>
+        <rect className={`wrap ${this.props.type} ${sponsored}`} ></rect>
       </g>
     )  
   }
