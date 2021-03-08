@@ -1,5 +1,4 @@
 import React from 'react';
-import * as d3 from 'd3';
 import Product from './Product';
 import Category from './Category';
 import Overlay from './Overlay';
@@ -24,7 +23,14 @@ export default class ShopFloor extends React.Component {
       container: {width, height},
     })
 
-    setUpZoom(this.svgRef.current, this.gRef.current);
+    setUpZoom(this.svgRef.current, this.gRef.current, this.handleZoomEnd);
+  }
+
+  handleZoomEnd = () => {
+    console.log('yea it is')
+    this.setState({
+      windowSize: [window.innerWidth,window.innerHeight],  
+    })
   }
   
   componentWillUnmount() {
@@ -40,11 +46,6 @@ export default class ShopFloor extends React.Component {
     });    
   }
 
-  handleZoom = d3.zoom().on('zoom', e => {
-      const g = d3.select(this.gRef.current);
-      g.attr('transform', d3.event.transform)
-  })
-
   render() {
     const items = this.props.items.map((item, index) => {
       if (item.type !== 'product') {
@@ -55,6 +56,7 @@ export default class ShopFloor extends React.Component {
             addChildren={this.props.addChildren}
             removeDescendants={this.props.removeDescendants}
             key={item.id}
+            windowSize={this.state.windowSize}
           />
         )
       } else {

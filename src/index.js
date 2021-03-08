@@ -82,7 +82,7 @@ class App extends React.Component {
         });
         console.log('items, titlebars',items,titleBars)
         const bounds = newItems[0].groupGridBounds;
-        zoomToBounds(bounds);
+        // zoomToBounds(bounds);
         
         this.addLozenge(parent, bounds);
       }
