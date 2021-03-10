@@ -12,6 +12,8 @@ export default class ShopFloor extends React.Component {
 
     this.state= {
       container: {width: 1000, height: 1000},
+      viewBox: [0, 0, 1000, 1000],
+      transform: null,
     }
   }
 
@@ -21,15 +23,22 @@ export default class ShopFloor extends React.Component {
     const height = window.innerHeight;
     this.setState({
       container: {width, height},
+      viewBox: [0, 0, width, height],
     })
 
     setUpZoom(this.svgRef.current, this.gRef.current, this.handleZoomEnd);
   }
 
-  handleZoomEnd = () => {
-    console.log('yea it is')
+  handleZoomEnd = (t) => {
+    const viewBox = {
+      x: - t.x / t.k, 
+      y: - t.y / t.k,
+      width: this.state.container.width / t.k,
+      height: this.state.container.height / t.k
+    }
     this.setState({
-      windowSize: [window.innerWidth,window.innerHeight],  
+      viewBox,
+      transform: t,  
     })
   }
   
@@ -48,6 +57,7 @@ export default class ShopFloor extends React.Component {
 
   render() {
     const items = this.props.items.map((item, index) => {
+      if (isOutOfView(item, this.state.viewBox)) {return null;}
       if (item.type !== 'product') {
         return (
           <Category  
@@ -96,5 +106,17 @@ export default class ShopFloor extends React.Component {
   }
 }
 
+const isOutOfView = function (item, viewBox) {
+  const bounds = item.bounds;
+  const {x, y, width, height} = viewBox;
+  const out = {};
+  out.left = bounds[0][0] < x && bounds[1][0] < x;
+  out.right = bounds[0][0] > (x + width) && bounds[1][0] > (x + width);
+  out.top = bounds[1][1] < y;
+  out.bottom = bounds[0][1] > (y + height);
 
+
+	return (out.left || out.right || out.top || out.bottom)
+
+};
 

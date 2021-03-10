@@ -1,11 +1,4 @@
 import * as d3 from 'd3';
-import { GRID_WIDTH, GRID_UNIT_SIZE, GRID_HEIGHT } from './constants' ;
-
-const initialScale = 0.5
-const zoomWidth = -((GRID_WIDTH * GRID_UNIT_SIZE) * (1-initialScale)/2) + 1000;
-const zoomHeight = -((GRID_HEIGHT * GRID_UNIT_SIZE) * (1-initialScale)/2) + 1000;
-// console.log('zoomWidth, zoomHeight',zoomWidth, zoomHeight)
-// const initialZoom = d3.zoomIdentity.translate(zoomWidth, zoomHeight).scale(initialScale);
 
 let svg, g, zoomEnd; 
 export const d3var = {};
@@ -25,13 +18,14 @@ export function setUpZoom(zoomContainerNode, zoomedNode, callback) {
   
 }
 
-const handleZoom = d3.zoom().scaleExtent([0.1,7]).translateExtent([[5000,5000],[20000,20000]])
+const handleZoom = d3.zoom().scaleExtent([0.1,7])
   .on('zoom', e => {
   g.attr('transform', d3.event.transform)
   // console.log(d3.event.transform)
   })
   .on('end', e => {
-    zoomEnd();
+    console.log(d3.event.transform)
+    zoomEnd(d3.event.transform);
   });
 
 
@@ -50,7 +44,6 @@ export function zoomToBounds(bounds, duration = 750) {
   svg.transition().duration(duration).call(
     handleZoom.transform,
     d3.zoomIdentity
-      .translate(translate[0], translate[1]).scale(scale)
+      .translate(translate[0], translate[1]).scale(scale),
   );
-
 }

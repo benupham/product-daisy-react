@@ -97,6 +97,8 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
   const groupGrid = findClosestPosition({x: origin.x, y: origin.y}, itemsGridWidth, itemsGridHeight, newGrid);
   // console.log('item grid',groupGrid);
   
+  //TODO: Add these group bounds to Parent
+  // REMOVE from products
   // Define the corner coordinates (bounds) of the rect of items
   const groupGridBounds = 
     [[newGrid[groupGrid[0]].x, 
@@ -264,12 +266,15 @@ function addPositionData(grid, itemData, locationCells, groupCell = null, groupG
   if (groupCell) {
     itemData.x = grid[groupCell].x;
     itemData.y = grid[groupCell].y;
-    itemData.groupGridBounds = groupGridBounds;  
+    itemData.groupGridBounds = groupGridBounds;
   } else {
     itemData.x = grid[locationCells[0]].x;
     itemData.y = grid[locationCells[0]].y;
   }
-
+  const itemLowerBoundsX = itemData.x + typeSize[itemData.type][0]*GRID_UNIT_SIZE[0] ;
+  const itemLowerBoundsY = itemData.y + typeSize[itemData.type][1]*GRID_UNIT_SIZE[1] ;
+  itemData.bounds = [[itemData.x, itemData.y],[itemLowerBoundsX, itemLowerBoundsY]];  
+  
   return itemData;
 }
 

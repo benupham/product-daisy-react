@@ -67,7 +67,6 @@ class App extends React.Component {
         const oldItems = [...this.state.items];
         const index = oldItems.findIndex(item => item.id === parentId);
         const parent = {...oldItems[index], isOpen: true};
-        // TODO: Change parent (origin) to mouseclick x y 
         const origin = clickPos ? {x: clickPos[0], y: clickPos[1]} : parent; 
         const [grid, newItems, titleBar] = groupToGridGroup(origin, data, this.state.grid, parent);
         const items = [...oldItems, ...newItems];
