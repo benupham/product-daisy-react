@@ -3,7 +3,7 @@ import Product from './Product';
 import Category from './Category';
 import Overlay from './Overlay';
 import { setUpZoom } from '../zoom';
-import { GRID_HEIGHT, GRID_UNIT_SIZE, GRID_WIDTH } from '../constants';
+import { GRID_CENTER, GRID_HEIGHT, GRID_UNIT_SIZE, GRID_WIDTH } from '../constants';
 
 export default class ShopFloor extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class ShopFloor extends React.Component {
     this.state= {
       container: {width: 1000, height: 1000},
       viewBox: [0, 0, 1000, 1000],
-      transform: {k: 0.01, x: 50, y: 50},
+      transform: {k: 0.01, x: -GRID_CENTER.x, y: -GRID_CENTER.y},
     }
   }
 
@@ -24,7 +24,7 @@ export default class ShopFloor extends React.Component {
     const height = window.innerHeight;
     this.setState({
       container: {width, height},
-      viewBox: [0, 0, width, height],
+      viewBox: [GRID_CENTER.x, GRID_CENTER.y, width, height],
     })
 
     setUpZoom(this.svgRef.current, this.gRef.current, this.handleZoomEnd);
@@ -104,7 +104,8 @@ export default class ShopFloor extends React.Component {
             height={GRID_HEIGHT*GRID_UNIT_SIZE[1]} 
             x="0" y="0"
             fill="#fff"
-            stroke="#000"  
+            stroke="#000"
+            stroke-width="10"  
           />
             {titles}
             {items}

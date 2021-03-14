@@ -193,44 +193,57 @@ function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
   let d;
   let winner = []; 
   
-  /* TODO: Rewrite as a search rippling out as
-  concentric circles from the clicked item, return
-  first match, rather than search through every grid coordinate.     
-  */
-  // Let's try that here
   // Get the grid index of the origin item's topleft cell, or index of grid center
   let originCell; 
   if (origin.cells) {
     originCell = origin.cells[0];
   } else {
-    originCell = Math.round((grid.length - 1)/2);
+    originCell = Math.round((grid.length - 1)/2) + Math.round(GRID_HEIGHT/2);
   }
   
-  for (let i = 0; i < GRID_WIDTH/2; i++) {
+  // We are going to search a sub-grid of the grid
+  // to save a lot of time.
+  // Start with a baseline sub-grid size 
+  let i = Math.min(itemsGridHeight,itemsGridWidth);
+  // We are assuming GRID_WIDTH=GRID_HEIGHT
+  for (i; i < GRID_WIDTH/2; i++) {
     // Search a square radiating out from the origin point
-    const start = originCell - i - i*GRID_WIDTH < 0 ? 0 : originCell - i - i*GRID_WIDTH;
-    const end = originCell + i + i*GRID_WIDTH > (grid.length-1) ? (grid.length-1) : originCell + i + i*GRID_WIDTH;
-    
-  }
+    const side = i * 2 + 1; 
+    const cells = [];
+    for (let j = 0; j < side; j++) {
+      for (let k = 0; k < side; k++) {
+        let cell = originCell - i - i * GRID_WIDTH + j + k * GRID_WIDTH;
+        if (cell < 0) cell = 0;
+        if (cell >= grid.length) cell = grid.length-1;  
+        cells.push(cell);
+      }
+      
+    }
 
-  // Run through all the cells in the grid
-  for(let cell = 0; cell < grid.length; cell++) {
-    // See if the item(s) rect would fit if positioned at that cell
-    let candidate = fitByType(cell, grid, itemsGridWidth, itemsGridHeight);
+    for (const cell of cells) {
+      // See if the item(s) rect would fit if positioned at that cell
+      let candidate = fitByType(cell, grid, itemsGridWidth, itemsGridHeight);
+      
+      // See if that location is closest to the current location
+      if (candidate && (d = sqdist2(origin, candidate, grid)) < minDist) { 
+        minDist = d;
+        winner = candidate;
+      }      
+    }
     
-    // See if that location is closest to the current location
-    if (candidate && (d = sqdist2(origin, candidate, grid)) < minDist) { 
-      minDist = d;
-      winner = candidate;
-    } 
+    if (winner.length > 0) {
+      // console.log('winner',winner)
+      break;
+      
+    }    
+    
   }
   if (winner.length > 0) {
-
     return winner;
-    
-  } else {
-    throw new Error('I guess the grid is full. Exiting.');
   }
+  else {
+    throw new Error('You need a bigger grid, bro.');
+  } 
 
 }
 

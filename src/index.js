@@ -35,8 +35,10 @@ class App extends React.Component {
         console.log(GRID_CENTER)
         const deptData = data.filter(d => d.type === 'dept');
         const results = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments'});
+        const t0 = performance.now();
         let {items,grid,titleBars} = this.displayEverything(data, results[0], results[1], results[2]);
-        console.log('finished plotting')
+        const t1 = performance.now();
+        console.log(`finished plotting. time: ${t1-t0}`);
         this.setState({
           items,
           grid,

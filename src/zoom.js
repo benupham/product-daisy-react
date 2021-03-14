@@ -1,14 +1,14 @@
 import * as d3 from 'd3';
+import { GRID_CENTER } from './constants';
 
 let svg, g, zoomEnd; 
 export const d3var = {};
 
 export function setUpZoom(zoomContainerNode, zoomedNode, callback) {
   svg = d3.select(zoomContainerNode);
-  g = d3.select(zoomedNode);
-  zoomEnd = callback; 
+  g = d3.select(zoomedNode); 
   svg.call(handleZoom);
-
+  zoomEnd = callback;
   g.on('click', function() {
     console.log('svg coor click', d3.mouse(this))
     console.log('container', svg.node().getBBox())
@@ -17,8 +17,9 @@ export function setUpZoom(zoomContainerNode, zoomedNode, callback) {
   })
   
 }
+//.scaleExtent([0.01,7])
 
-const handleZoom = d3.zoom().scaleExtent([0.01,7])
+const handleZoom = d3.zoom()
   .on('zoom', e => {
   g.attr('transform', d3.event.transform)
   // console.log(d3.event.transform)
