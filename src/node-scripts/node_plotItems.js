@@ -1,25 +1,101 @@
-import { GRID_WIDTH, GRID_HEIGHT, GRID_UNIT_SIZE, typeSize } from "./constants";
+const {PrismaClient} = require('@prisma/client')
 
-/* 
+const prisma = new PrismaClient()
 
-Based on snapToGrid.js, but where each item level group first arranges in square of optimal width/height
-ratio, then positions itself as close as possible to its parent originator. The position of the parent 
-and its group does not change. 
 
-Steps:
-1. Count # of objects in a group (dept, subdept, brand, products)
-2. Calculate optimal square width/height based on object grid size (ie 1x2, 2x1 etc)
-3. Run fitByType based on total grid size of that square
-4. Update the position of all objects in the group based on final location of 0,0 square
-5. Objects are positioned by their order in the array. This does not change. 
+const GRID_WIDTH = 500;
+const GRID_HEIGHT = 500;
 
-TO DO
--- improve calculation of placement of items by rippling from center instead of checking every cell
--- refactor for clarity between groups of items and single items
+const GRID_UNIT_SIZE = [200,200]; 
+const GRID_CENTER = {x: GRID_WIDTH*GRID_UNIT_SIZE[0]/2, y: GRID_HEIGHT*GRID_UNIT_SIZE[1]/2};
 
-*/
+const UNIT_MARGIN = 25;
 
-export function initGridCells() {
+const typeSize = {
+  "product" : [2,4],
+  "brand" : [3,2],
+  "subdept" : [4,2],
+  "dept" : [3,3]
+}
+
+
+async function getTheData() {
+  const allItems = await prisma.products.findMany({
+    where: {
+    OR: [
+      {
+        dept: { in: [930,23047,23511,4550] },
+      },
+      {
+        id: { in: [930,23047,23511,4550]},
+      }
+    ]}
+  })
+  console.log(allItems.length);
+  const origin = GRID_CENTER;
+  console.log(GRID_CENTER);
+  const deptData = allItems.filter(d => d.type === 'dept');
+  const results = groupToGridGroup(origin, deptData, initGridCells(),{id: 0, name: 'All Departments'});
+  let {items,grid,titleBars} = displayEverything(allItems, results[0], results[1], results[2]);
+  console.log('finished plotting')
+
+
+  // res.json(allItems);
+  // .then(data => {
+  //   if (data.length > 0) {
+  //     console.log('the data:',data.length)
+  //     const origin = GRID_CENTER;
+  //     console.log(GRID_CENTER)
+  //     const deptData = data.filter(d => d.type === 'dept');
+  //     const results = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments'});
+  //     let {items,grid,titleBars} = this.displayEverything(data, results[0], results[1], results[2]);
+  //     console.log('finished plotting')
+  //     this.setState({
+  //       items,
+  //       grid,
+  //       titleBars,
+  //       isLoaded: true,
+  //       lastClicked: items[0],
+  //     });
+
+  //     const bounds = items[0].groupGridBounds;
+  //     const lozenge = {
+  //       type: 'store',
+  //       id: 0,
+  //       name: `All Departments`,
+  //       parent: null,
+  //       qty: null,
+  //       groupGridBounds: bounds, 
+  //     }        
+  //     this.addLozenge(lozenge, bounds);
+  //     // zoomToBounds([[14000,14000],[16000,16000]], 1500);
+      
+  //   }
+  // });
+}
+
+getTheData();
+
+const displayEverything = (data, grid, items, titleBars) => {
+  console.log(items.length + 'of ' + data.length);
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type !== 'product' && items[i].isOpen !== true) {
+      items[i].isOpen = true;
+      const newItems = data.filter(d => d.parent === items[i].id);
+      const results = groupToGridGroup(items[i], newItems, grid, items[i]);
+      // console.log('results',results);
+      grid = results[0];
+      items = [...items,...results[1]];
+      
+      titleBars = [...titleBars,...results[2]];
+      return displayEverything(data,grid,items,titleBars);
+    }
+    
+  }
+  return {items,grid,titleBars}
+}
+
+function initGridCells() {
   const grid = [];
   for(let i = 0; i < GRID_WIDTH; i++) {
     for(let j = 0; j < GRID_HEIGHT; j++) {
@@ -83,7 +159,7 @@ function determineItemsGridSize(itemsType, itemsCount) {
 // on the grid so they are grouped together
 // and close to their parent category item 
 // return the updated items data
-export function groupToGridGroup(origin, itemsData, grid, parent) {
+function groupToGridGroup(origin, itemsData, grid, parent) {
   
   const newGrid = [...grid];
   const itemsType = itemsData[0].type; 
@@ -170,7 +246,7 @@ function setGridCells(grid, item) {
 
 // Take single item data and get its position
 // on the grid
-export function groupToGridSingle(itemData, grid, origin) {
+function groupToGridSingle(itemData, grid, origin) {
   const type = itemData.type;
   const itemWidth = typeSize[type][0];
   const itemHeight = typeSize[type][1];
@@ -189,7 +265,7 @@ export function groupToGridSingle(itemData, grid, origin) {
 // Given an origin point, find the closest available
 // position from that origin for an item of width and height
 function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
-  let minDist = 100000000;
+  let minDist = 10000000000;
   let d;
   let winner = []; 
   
@@ -197,32 +273,21 @@ function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
   concentric circles from the clicked item, return
   first match, rather than search through every grid coordinate.     
   */
-  // Let's try that here
-  // Get the grid index of the origin item's topleft cell, or index of grid center
-  let originCell; 
-  if (origin.cells) {
-    originCell = origin.cells[0];
-  } else {
-    originCell = Math.round((grid.length - 1)/2);
-  }
-  
-  for (let i = 0; i < GRID_WIDTH/2; i++) {
-    // Search a square radiating out from the origin point
-    const start = originCell - i - i*GRID_WIDTH < 0 ? 0 : originCell - i - i*GRID_WIDTH;
-    const end = originCell + i + i*GRID_WIDTH > (grid.length-1) ? (grid.length-1) : originCell + i + i*GRID_WIDTH;
-    
-  }
-
+  // console.log('origin', origin)
   // Run through all the cells in the grid
   for(let cell = 0; cell < grid.length; cell++) {
     // See if the item(s) rect would fit if positioned at that cell
     let candidate = fitByType(cell, grid, itemsGridWidth, itemsGridHeight);
     
+    
     // See if that location is closest to the current location
     if (candidate && (d = sqdist2(origin, candidate, grid)) < minDist) { 
       minDist = d;
       winner = candidate;
-    } 
+      
+    } else if (candidate && (d = sqdist2(origin, candidate, grid)) > minDist) {
+      break;
+    }
   }
   if (winner.length > 0) {
 

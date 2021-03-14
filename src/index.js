@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { fetchChildren, fetchSearch, fetchSponsored } from './api/api';
+import { fetchAll, fetchChildren, fetchSearch, fetchSponsored } from './api/api';
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
-import { renderCSSVariables } from './constants';
+import { GRID_CENTER, renderCSSVariables } from './constants';
 import { groupToGridGroup, initGridCells } from './groupToGrid';
 import './index.css';
 import { zoomToBounds } from './zoom';
@@ -26,13 +26,17 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const globalCSSVariables = renderCSSVariables();
-    fetchChildren(0) // 0 is the parent of Departments
+    renderCSSVariables();
+    fetchAll()
     .then(data => {
       if (data.length > 0) {
-        const origin = {x: 15000, y: 15000};
-        const [grid, items, titleBars] = groupToGridGroup(origin, data, this.state.grid,{id: 0, name: 'All Departments'});
-
+        console.log('the data:',data.length)
+        const origin = GRID_CENTER;
+        console.log(GRID_CENTER)
+        const deptData = data.filter(d => d.type === 'dept');
+        const results = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments'});
+        let {items,grid,titleBars} = this.displayEverything(data, results[0], results[1], results[2]);
+        console.log('finished plotting')
         this.setState({
           items,
           grid,
@@ -51,12 +55,13 @@ class App extends React.Component {
           groupGridBounds: bounds, 
         }        
         this.addLozenge(lozenge, bounds);
-        zoomToBounds(bounds, 100);
+        // zoomToBounds([[14000,14000],[16000,16000]], 1500);
+        
       }
     });
   }
 
-  addChildren = (parentId, clickPos) => {
+  addChildren = (parentId, clickPos=null) => {
     fetchChildren(parentId)    
     .then(async data => {
       if (data.length > 0) {
@@ -83,10 +88,29 @@ class App extends React.Component {
         const bounds = newItems[0].groupGridBounds;
         // zoomToBounds(bounds);
         
-        this.addLozenge(parent, bounds);
+       // this.addLozenge(parent, bounds);
       }
     });
   };
+
+  displayEverything = (data, grid, items, titleBars) => {
+    // console.log('items length: ',items.length);
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type !== 'product' && items[i].isOpen !== true) {
+        items[i].isOpen = true;
+        const newItems = data.filter(d => d.parent === items[i].id);
+        const results = groupToGridGroup(items[i], newItems, grid, items[i]);
+        // console.log('results',results);
+        grid = results[0];
+        items = [...items,...results[1]];
+        console.log(items.length + 'of ' + data.length);
+        titleBars = [...titleBars,...results[2]];
+        return this.displayEverything(data,grid,items,titleBars);
+      }
+      
+    }
+    return {items,grid,titleBars}
+  }
 
   addLozenge(item, bounds) {
     const lozenge = {childrenBounds: bounds, ...item};
@@ -248,3 +272,4 @@ ReactDOM.render(
   <App />,
   document.getElementById('root')
 )
+

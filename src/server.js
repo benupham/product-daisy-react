@@ -9,6 +9,21 @@ const app = express()
 
 app.use(cors())
 
+app.get(`/allItems`, async (req, res) => {
+  const allItems = await prisma.products.findMany({
+    where: {
+    OR: [
+      {
+        dept: { in: [930,23047,23511,4550] },
+      },
+      {
+        id: { in: [930,23047,23511,4550]},
+      }
+    ]}
+  })
+  res.json(allItems);
+})
+
 app.get(`/children/:id`, async (req, res) => {
   const { id } = req.params
   const children = await prisma.products.findMany({
@@ -40,6 +55,7 @@ app.get(`/search`, async (req, res) => {
     }) 
   }
   if (dept) {
+    
     andStatement.push({
       dept: Number(dept),
     })

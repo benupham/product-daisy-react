@@ -1,5 +1,5 @@
 import React from 'react';
-//import '../css/CategoryTitleBar.css';
+import '../css/CategoryTitleBar.css';
 import { d3var } from '../zoom';
 
 export default class CategoryTitleBar extends React.Component {
@@ -22,11 +22,12 @@ export default class CategoryTitleBar extends React.Component {
     const y = this.props.y; 
     const sponsoredClass = this.props.sponsored ? 'sponsored' : '';
     const open = this.props.isOpen ? 'open' : '';
+    const dept = this.props.dept.replace(/&|[!\"#$% '\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '-').toLowerCase();
 
     return (
       <g className={`Category`} onClick={e => this.handleClick(e)} transform={`translate(${x}, ${y})`}
       >
-        <rect className={`wrap ${this.props.type} ${sponsoredClass + ' ' + open}`}>
+        <rect className={`wrap ${this.props.type} ${sponsoredClass + ' ' + open} ${dept}`}>
           <text>{this.props.name} {this.props.sponsored ? 'spon' : ''}</text>
         </rect>  
       </g>

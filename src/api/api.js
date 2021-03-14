@@ -6,6 +6,20 @@ const options = {
   method: 'GET',
 }
 
+export function fetchAll() {
+  const url = `http://localhost:3001/allItems`;
+
+  return fetch(url, options)
+  .then(res => {
+    if (res.ok) {
+      return res.json()
+    } else {
+      throw Error(res.statusText)
+    }
+  })
+  .catch(err => console.log('the error',err))
+}
+
 export function fetchChildren(parentId) {
   const url = `http://localhost:3001/children/${parentId}`;
 

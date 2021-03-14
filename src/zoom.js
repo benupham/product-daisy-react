@@ -18,7 +18,7 @@ export function setUpZoom(zoomContainerNode, zoomedNode, callback) {
   
 }
 
-const handleZoom = d3.zoom().scaleExtent([0.1,7])
+const handleZoom = d3.zoom().scaleExtent([0.01,7])
   .on('zoom', e => {
   g.attr('transform', d3.event.transform)
   // console.log(d3.event.transform)

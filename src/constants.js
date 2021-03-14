@@ -1,9 +1,11 @@
 export const imagesURL = window.location.href === "http://0.0.0.0:3000/" ? "./images/" : "https://s3-us-west-1.amazonaws.com/consumerland/";
 
-export const GRID_WIDTH = 150;
-export const GRID_HEIGHT = 150;
+export const GRID_WIDTH = 500;
+export const GRID_HEIGHT = 500;
 
 export const GRID_UNIT_SIZE = [200,200]; 
+export const GRID_CENTER = {x: GRID_WIDTH*GRID_UNIT_SIZE[0]/2, y: GRID_HEIGHT*GRID_UNIT_SIZE[1]/2};
+
 const UNIT_MARGIN = 25;
 
 export const typeSize = {
@@ -109,6 +111,29 @@ export const nameMaxLen = {
   "brand" : 50,
   "subdept" : 50,
   "dept" : 50
+}
+
+export const deptsLookup = {
+"9" :	"sales",
+"930" :	"produce",
+"1965" :	"pantry",
+"4550" :	"dairy---eggs",
+"6138" :	"deli",
+"7412" :	"bakery",
+"8333" :	"snacks",
+"11222" :	"frozen",
+"12674" :	"beverages",
+"15047" :	"meat---seafood",
+"15601" :	"canned-goods",
+"16343" :	"bulk",
+"16985" :	"dry-goods---pasta",
+"17785" :	"floral",
+"17835" :	"international",
+"18267" :	"breakfast",
+"18872" :	"personal-care",
+"23047" :	"babies",
+"23511" :	"pets",
+"23780" :	"household",
 }
 
 

@@ -3,6 +3,7 @@ import Product from './Product';
 import Category from './Category';
 import Overlay from './Overlay';
 import { setUpZoom } from '../zoom';
+import { GRID_HEIGHT, GRID_UNIT_SIZE, GRID_WIDTH } from '../constants';
 
 export default class ShopFloor extends React.Component {
   constructor(props) {
@@ -13,7 +14,7 @@ export default class ShopFloor extends React.Component {
     this.state= {
       container: {width: 1000, height: 1000},
       viewBox: [0, 0, 1000, 1000],
-      transform: null,
+      transform: {k: 0.01, x: 50, y: 50},
     }
   }
 
@@ -58,6 +59,7 @@ export default class ShopFloor extends React.Component {
   render() {
     const items = this.props.items.map((item, index) => {
       if (isOutOfView(item, this.state.viewBox)) {return null;}
+      if (this.state.transform && this.state.transform.k < 0.18) {return null;}
       if (item.type !== 'product') {
         return (
           <Category  
@@ -97,6 +99,13 @@ export default class ShopFloor extends React.Component {
           width={this.state.container.width} height={this.state.container.height} 
           ref={this.svgRef}>
           <g className="zoomContainer" ref={this.gRef}>
+          <rect 
+            width={GRID_WIDTH * GRID_UNIT_SIZE[0]} 
+            height={GRID_HEIGHT*GRID_UNIT_SIZE[1]} 
+            x="0" y="0"
+            fill="#fff"
+            stroke="#000"  
+          />
             {titles}
             {items}
           </g> 
@@ -114,7 +123,6 @@ const isOutOfView = function (item, viewBox) {
   out.right = bounds[0][0] > (x + width) && bounds[1][0] > (x + width);
   out.top = bounds[1][1] < y;
   out.bottom = bounds[0][1] > (y + height);
-
 
 	return (out.left || out.right || out.top || out.bottom)
 

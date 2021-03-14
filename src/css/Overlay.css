@@ -1,0 +1,25 @@
+/* 
+["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3",
+"#fdb462","#b3de69","#fccde5","#d9d9d9",
+"#bc80bd","#ccebc5","#ffed6f"] */
+
+.sales {fill: #8dd3c7; stroke: #000; stroke-width: 3px;}
+.produce {fill: #ffffb3; stroke: #000; stroke-width: 3px;}
+.pantry {fill: #bebada; stroke: #000; stroke-width: 3px;}
+.dairy---eggs {fill: #8dd3c7; stroke: #000; stroke-width: 3px;}
+.deli {fill: #fb8072; stroke: #000; stroke-width: 3px;}
+.bakery {fill: #80b1d3; stroke: #000; stroke-width: 3px;}
+.snacks {fill: #fdb462; stroke: #000; stroke-width: 3px;}
+.frozen {fill: #b3de69; stroke: #000; stroke-width: 3px;}
+.beverages {fill: #fccde5; stroke: #000; stroke-width: 3px;}
+.meat---seafood {fill: #d9d9d9; stroke: #000; stroke-width: 3px;}
+.canned-goods {fill: #bc80bd; stroke: #000; stroke-width: 3px;}
+.bulk {fill: #ccebc5; stroke: #000; stroke-width: 3px;}
+.dry-goods---pasta {fill: #ffed6f; stroke: #000; stroke-width: 3px;}
+.floral {fill: #8dd3c7; stroke: #000; stroke-width: 3px;}
+.international {fill: #ffffb3; stroke: #000; stroke-width: 3px;}
+.breakfast {fill: #bebada; stroke: #000; stroke-width: 3px;}
+.personal-care {fill: #fb8072; stroke: #000; stroke-width: 3px;}
+.babies {fill: #80b1d3; stroke: #000; stroke-width: 3px;}
+.pets {fill: #fdb462; stroke: #000; stroke-width: 3px;}
+.household {fill: #b3de69; stroke: #000; stroke-width: 3px;}
