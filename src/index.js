@@ -4,7 +4,7 @@ import { fetchAll, fetchChildren, fetchSearch, fetchSponsored } from './api/api'
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
-import { GRID_CENTER, renderCSSVariables } from './constants';
+import { firstSet, GRID_CENTER, renderCSSVariables, secondSet } from './constants';
 import { groupToGridGroup, initGridCells } from './groupToGrid';
 import './index.css';
 import { zoomToBounds } from './zoom';
@@ -34,15 +34,25 @@ class App extends React.Component {
         const origin = GRID_CENTER;
         console.log(GRID_CENTER)
         const deptData = data.filter(d => d.type === 'dept');
-        const results = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments'});
+        const results = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments', type: 'all'});
+        const first = data.filter(d => {
+          return firstSet.includes(d.dept) || firstSet.includes(d.id)
+        });
+        console.log('first',first.length)
+        const second = data.filter(d => {
+          return secondSet.includes(d.dept) || secondSet.includes(d.id)
+        });
+        console.log('second',second.length)
         const t0 = performance.now();
-        let {items,grid,titleBars} = this.displayEverything(data, results[0], results[1], results[2]);
+        let {items,grid,titleBars} = this.displayEverything(first, results[0], results[1], results[2]);
+        console.log('finished first set')
+        const finalResults = this.displayEverything(second, grid, items, titleBars);
         const t1 = performance.now();
         console.log(`finished plotting. time: ${t1-t0}`);
         this.setState({
-          items,
-          grid,
-          titleBars,
+          items: finalResults.items,
+          grid: finalResults.grid,
+          titleBars: finalResults.titleBars,
           isLoaded: true,
           lastClicked: items[0],
         });
@@ -99,8 +109,9 @@ class App extends React.Component {
     // console.log('items length: ',items.length);
     for (let i = 0; i < items.length; i++) {
       if (items[i].type !== 'product' && items[i].isOpen !== true) {
-        items[i].isOpen = true;
         const newItems = data.filter(d => d.parent === items[i].id);
+        if (newItems.length === 0) continue;
+        items[i].isOpen = true;
         const results = groupToGridGroup(items[i], newItems, grid, items[i]);
         // console.log('results',results);
         grid = results[0];

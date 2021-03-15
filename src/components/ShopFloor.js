@@ -59,7 +59,7 @@ export default class ShopFloor extends React.Component {
   render() {
     const items = this.props.items.map((item, index) => {
       if (isOutOfView(item, this.state.viewBox)) {return null;}
-      if (this.state.transform && this.state.transform.k < 0.18) {return null;}
+      if (this.state.transform && this.state.transform.k < 0.08) {return null;}
       if (item.type !== 'product') {
         return (
           <Category  
@@ -105,7 +105,7 @@ export default class ShopFloor extends React.Component {
             x="0" y="0"
             fill="#fff"
             stroke="#000"
-            stroke-width="10"  
+            strokeWidth="10"  
           />
             {titles}
             {items}

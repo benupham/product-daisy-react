@@ -1,4 +1,4 @@
-import { GRID_WIDTH, GRID_HEIGHT, GRID_UNIT_SIZE, typeSize } from "./constants";
+import { GRID_WIDTH, GRID_HEIGHT, GRID_UNIT_SIZE, typeSize, deptsList } from "./constants";
 
 /* 
 
@@ -83,30 +83,42 @@ function determineItemsGridSize(itemsType, itemsCount) {
 // on the grid so they are grouped together
 // and close to their parent category item 
 // return the updated items data
+const deptsAdded = [];
 export function groupToGridGroup(origin, itemsData, grid, parent) {
   
-  const newGrid = [...grid];
+  /* For subdepts, set their origin to be equally spaced points
+     on the grid, by dividing the grid.length by the number of depts
+     But careful to not position something directly at the end or beginning
+   */
+  if (parent.type === 'dept') {
+    let originCell = Math.round(grid.length / (deptsList.length+1)) * Math.round(deptsList.indexOf(parent.id)+1) - Math.round(GRID_WIDTH/(deptsList.indexOf(parent.id)+1));
+    // if ((originCell % GRID_WIDTH < GRID_WIDTH/5) || (originCell % GRID_WIDTH > GRID_WIDTH * 0.8)){
+    //   originCell = Math.round(originCell + GRID_WIDTH/3);
+    // }
+    origin.cells[0] = originCell;
+    console.log(`${parent.name} subdept start point: ${origin.cells[0]}`);
+  }
+
+  
   const itemsType = itemsData[0].type; 
-  const itemsSize = typeSize[itemsType];
   // Calculate the size of the rect to contain
   // all the items returned 
   const [itemsGridWidth, itemsGridHeight] = determineItemsGridSize(itemsType, itemsData.length);
   
   // Then find the closest spot for that containing rectangle. 
-  const groupGrid = findClosestPosition({x: origin.x, y: origin.y}, itemsGridWidth, itemsGridHeight, newGrid);
-  // console.log('item grid',groupGrid);
+  const groupGrid = findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid);
   
   //TODO: Add these group bounds to Parent
   // REMOVE from products
   // Define the corner coordinates (bounds) of the rect of items
   const groupGridBounds = 
-    [[newGrid[groupGrid[0]].x, 
-    newGrid[groupGrid[0]].y],
+    [[grid[groupGrid[0]].x, 
+    grid[groupGrid[0]].y],
     // this bottom corner of the bounds takes account
     // of the fact that item's position is their upper left corner
     // but they may extend multiple cells right and down
-    [newGrid[groupGrid[groupGrid.length-1]].x + GRID_UNIT_SIZE[0], 
-    newGrid[groupGrid[groupGrid.length-1]].y + GRID_UNIT_SIZE[1]]];   
+    [grid[groupGrid[groupGrid.length-1]].x + GRID_UNIT_SIZE[0], 
+    grid[groupGrid[groupGrid.length-1]].y + GRID_UNIT_SIZE[1]]];   
    
 
   // Occupy the top row of this group grid 
@@ -122,10 +134,10 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
   titleBar.cells = groupGrid.filter( (cell, index) => {
     return index % itemsGridHeight === 0
   })
-  titleBar.x = newGrid[titleBar.cells[0]].x;
-  titleBar.y = newGrid[titleBar.cells[0]].y;
+  titleBar.x = grid[titleBar.cells[0]].x;
+  titleBar.y = grid[titleBar.cells[0]].y;
   
-  setGridCells(newGrid,titleBar);
+  setGridCells(grid,titleBar);
   
   // Now for each item in the group, position it
   // in an open space on the grid that is also
@@ -139,16 +151,16 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
 
     for (let i = 0; i < groupGrid.length; i++) {
       const groupCell = groupGrid[i];
-      const candidate = fitByType(groupCell, newGrid, itemWidth, itemHeight);
+      const candidate = fitByType(groupCell, grid, itemWidth, itemHeight);
       if (candidate) {
-        addPositionData(newGrid, item, candidate, groupCell, groupGridBounds);
-        setGridCells(newGrid, item);
+        addPositionData(grid, item, candidate, groupCell, groupGridBounds);
+        setGridCells(grid, item);
         break;
       } 
     }
   })
-  // console.log('the grid',newGrid)
-  return [newGrid, itemsData, [titleBar]]; 
+  // console.log('the grid',grid)
+  return [grid, itemsData, [titleBar]]; 
 
 }
 
@@ -206,15 +218,16 @@ function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
   // Start with a baseline sub-grid size 
   let i = Math.min(itemsGridHeight,itemsGridWidth);
   // We are assuming GRID_WIDTH=GRID_HEIGHT
-  for (i; i < GRID_WIDTH/2; i++) {
+  for (i; i < GRID_WIDTH; i++) {
     // Search a square radiating out from the origin point
     const side = i * 2 + 1; 
     const cells = [];
     for (let j = 0; j < side; j++) {
       for (let k = 0; k < side; k++) {
-        let cell = originCell - i - i * GRID_WIDTH + j + k * GRID_WIDTH;
-        if (cell < 0) cell = 0;
-        if (cell >= grid.length) cell = grid.length-1;  
+        let cell = originCell - i - (4 + i * GRID_WIDTH) + j + k * GRID_WIDTH;
+        if ((cell < 0) || (cell >= grid.length)) continue;
+        if (cell % GRID_HEIGHT + itemsGridHeight > GRID_HEIGHT) continue;  
+        
         cells.push(cell);
       }
       

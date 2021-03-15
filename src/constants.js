@@ -1,7 +1,7 @@
 export const imagesURL = window.location.href === "http://0.0.0.0:3000/" ? "./images/" : "https://s3-us-west-1.amazonaws.com/consumerland/";
 
-export const GRID_WIDTH = 500;
-export const GRID_HEIGHT = 500;
+export const GRID_WIDTH = 550;
+export const GRID_HEIGHT = 550;
 
 export const GRID_UNIT_SIZE = [200,200]; 
 export const GRID_CENTER = {x: GRID_WIDTH*GRID_UNIT_SIZE[0]/2, y: GRID_HEIGHT*GRID_UNIT_SIZE[1]/2};
@@ -113,7 +113,7 @@ export const nameMaxLen = {
   "dept" : 50
 }
 
-export const deptsLookup = {
+export const deptsClassLookup = {
 "9" :	"sales",
 "930" :	"produce",
 "1965" :	"pantry",
@@ -136,6 +136,42 @@ export const deptsLookup = {
 "23780" :	"household",
 }
 
+export const deptsList = [
+  9,930,1965,4550,6138,
+  7412,8333,11222,12674,15047,
+  15601,16343,16985,17785,17835,
+  18267,18872,23047,23511,23780
+];
+
+export const firstSet = [
+  9,930,1965,4550,6138,
+  7412,8333,11222,12674,15047,
+  15601,16343,16985,17785,17835
+]
+export const secondSet = [18267,18872,23047,23511,23780];
+
+export const deptsOrigins = {
+  "9" :	1,
+"930" :	2,
+"1965" : 3,
+"4550" : 4,
+"6138" : 5,
+"7412" : 6,
+"8333" : 7,
+"11222" :	8,
+"12674" :	9,
+"15047" :	10,
+"15601" :	11,
+"16343" :	12,
+"16985" :	13,
+"17785" :	14,
+"17835" :	15,
+"18267" :	16,
+"18872" :	17,
+"23047" :	18,
+"23511" :	19,
+"23780" :	20,
+}
 
 export function renderCSSVariables() {
   return (

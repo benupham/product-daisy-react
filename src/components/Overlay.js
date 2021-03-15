@@ -1,6 +1,6 @@
 import React from 'react';
 import '../css/Overlay.css';
-import { deptsLookup, GRID_UNIT_SIZE } from '../constants';
+import { deptsClassLookup } from '../constants';
 
 export default class Overlay extends React.Component {
   // constructor(props) {
@@ -19,7 +19,7 @@ export default class Overlay extends React.Component {
     }
     let dept = '';
     if (this.props.dept != null & this.props.dept !== 0) {
-      dept = deptsLookup[this.props.dept];
+      dept = deptsClassLookup[this.props.dept];
     } else {
       dept = 'all-depts';
     }
