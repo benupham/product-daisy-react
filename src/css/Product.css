@@ -23,6 +23,12 @@
   font-size: 36px;
   text-anchor: start;
 }
+
+.Product .image {
+  width: calc(var(--product-width) - var(--unit-margin));
+  height: calc(var(--product-width) - var(--unit-margin));
+  transform: translate(calc(var(--unit-margin) / 2), calc(var(--unit-margin) / 2));
+}
 /* 
 export const rectPosition = {
   "product" : [UNIT_MARGIN/2,UNIT_MARGIN/2],

@@ -1,8 +1,19 @@
 import React from 'react';
 import '../css/Category.css';
 import { d3var } from '../zoom';
+import { wrapName } from '../utilities';
 
 export default class Category extends React.Component {
+  constructor(props) {
+    super(props);
+    this.nameRef = React.createRef();
+  }
+
+  componentDidMount() {
+    
+    wrapName(this.nameRef.current, this.props);
+  }
+  
 
   handleClick = e => {
     const isOpen = this.props.isOpen;
@@ -28,12 +39,10 @@ export default class Category extends React.Component {
       <g className={`Category`} 
         onClick={e => this.handleClick(e)} 
         transform={`translate(${x}, ${y})`}
+        ref={this.nameRef}
          
       >
         <rect className={`wrap ${this.props.type} ${sponsoredClass + ' ' + open}`}></rect>
-        <text>{this.props.name} 
-        {this.props.sponsored ? 'spon' : ''}
-        </text>  
       </g>
     );
 

@@ -1,7 +1,7 @@
 export const imagesURL = window.location.href === "http://0.0.0.0:3000/" ? "./images/" : "https://s3-us-west-1.amazonaws.com/consumerland/";
 
-export const GRID_WIDTH = 550;
-export const GRID_HEIGHT = 550;
+export const GRID_WIDTH = 520; // these need to be even numbers!
+export const GRID_HEIGHT = 520;
 
 export const GRID_UNIT_SIZE = [200,200]; 
 export const GRID_CENTER = {x: GRID_WIDTH*GRID_UNIT_SIZE[0]/2, y: GRID_HEIGHT*GRID_UNIT_SIZE[1]/2};
@@ -10,9 +10,9 @@ const UNIT_MARGIN = 25;
 
 export const typeSize = {
   "product" : [2,4],
-  "brand" : [3,2],
-  "subdept" : [4,2],
-  "dept" : [3,3]
+  "brand" : [3,1],
+  "subdept" : [6,2],
+  "dept" : [12,4]
 }
 
 export const typePixelSize = {
@@ -75,7 +75,8 @@ export const nameFontSize = {
   "product" : 18 * typeSize.product[0],
   "brand" : 24 * typeSize.brand[0],
   "subdept" : 30 * typeSize.subdept[0],
-  "dept" : 42 * typeSize.dept[0]
+  "dept" : 42 * typeSize.dept[0],
+  "overlay" : GRID_UNIT_SIZE[0],
 }
 
 export const nameAnchor = {
@@ -85,11 +86,12 @@ export const nameAnchor = {
   "dept" : "middle"
 }
 
-export const nameAlignment = {
-  "product" : "start",
+export const nameVerticalAlign = {
+  "product" : "top",
   "brand" : "middle",
   "subdept" : "middle",
-  "dept" : "middle"
+  "dept" : "middle",
+  "overlay" : "middle",
 }
 
 export const namePosition = {
@@ -101,9 +103,9 @@ export const namePosition = {
 
 export const nameWidth = {
   "product" : rectSize["product"][0] - UNIT_MARGIN/2,
-  "brand" : rectSize["brand"][0]/2,
-  "subdept" : rectSize["subdept"][0]/2,
-  "dept" : 250
+  "brand" : rectSize["brand"][0] * 2/3,
+  "subdept" : rectSize["subdept"][0] * 2/3,
+  "dept" : 250,
 }
 
 export const nameMaxLen = {

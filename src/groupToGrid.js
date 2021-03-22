@@ -125,9 +125,11 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
   // so we can put the title bar there
   const titleBar = {
     id: parent.id,
+    type: 'overlay',
     parent: parent.parent,
     name: parent.name,
     dept: parent.dept,
+    subdept: parent.subdept,
     bounds: groupGridBounds,
     isOpen: true,
   }

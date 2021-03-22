@@ -18,4 +18,21 @@ model Products {
   subdept Int?
   value   Int?
   sale    Int?
+  x       Int?
+  y       Int?
+  width   Int?
+  height  Int?
+}
+
+model ProductsBk {
+  id      Int     @id @default(autoincrement())
+  name    String
+  type    String
+  price   String?
+  img     String?
+  parent  Int?
+  dept    Int?
+  subdept Int?
+  value   Int?
+  sale    Int?
 }

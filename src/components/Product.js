@@ -1,6 +1,7 @@
 import React from 'react';
 import '../css/Product.css';
 import { wrapName } from '../utilities';
+import { nameFontSize, nameWidth } from '../constants'; 
 
 export default class Product extends React.Component {
   constructor(props) {
@@ -9,7 +10,8 @@ export default class Product extends React.Component {
   }
 
   componentDidMount() {
-    wrapName(this.nameRef.current, this.props.name, this.props.type);
+    // Injects the product name inside the wrap rect
+    wrapName(this.nameRef.current, this.props);
   }
 
   handleClick = e => {
@@ -30,6 +32,7 @@ export default class Product extends React.Component {
       <g ref={this.nameRef} className={`Product`} onClick={() => this.handleClick()} transform={`translate(${x}, ${y})`}
       >
         <rect className={`wrap ${this.props.type} ${sponsored}`} ></rect>
+        <image className="image" href={`../images/${this.props.img}`} />
       </g>
     )  
   }

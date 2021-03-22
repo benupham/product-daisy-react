@@ -1,11 +1,15 @@
 import React from 'react';
 import '../css/Overlay.css';
 import { deptsClassLookup } from '../constants';
+import { wrapName } from '../utilities';
 
 export default class Overlay extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+
+  componentDidMount() {
+    this.nameRef = React.createRef();
+    // Injects the product name inside the wrap rect
+    wrapName(this.nameRef.current, this.props);
+  }
   
   render() {
     let x, y, width, height;
@@ -21,13 +25,13 @@ export default class Overlay extends React.Component {
     if (this.props.dept != null & this.props.dept !== 0) {
       dept = deptsClassLookup[this.props.dept];
     } else {
-      dept = 'all-depts';
+      dept = deptsClassLookup[this.props.id];
     }
     
 
     return (
-      <g>
-        <rect className={dept} x={x} y={y} width={width} height={height}/>
+      <g ref={this.nameRef} transform={`translate(${x}, ${y})`}>
+        <rect className={dept} width={width} height={height}/>
       </g>
     )
   } 

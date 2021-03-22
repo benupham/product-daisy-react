@@ -28,7 +28,7 @@ ol, ul {
   width: auto;
 }
 
-.Omnibox, .Cart {
+.Omnibox, .Cart, .Buttons {
   display: block;
   position: absolute;
 }
@@ -41,6 +41,11 @@ ol, ul {
 .Cart {
   right: 3%;
   top: 3%;
+}
+
+.Buttons {
+  bottom: 3%;
+  left: 3%;
 }
 
 .ShopFloor {

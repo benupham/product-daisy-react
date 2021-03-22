@@ -3,10 +3,11 @@ const options = {
     'Accept': 'application/json',
     'Content-Type': 'application/json;charset=UTF-8', 
   },
-  method: 'GET',
 }
 
+
 export function fetchAll() {
+  options.method = 'GET';
   const url = `http://localhost:3001/allItems`;
 
   return fetch(url, options)
@@ -21,6 +22,7 @@ export function fetchAll() {
 }
 
 export function fetchChildren(parentId) {
+  options.method = 'GET';
   const url = `http://localhost:3001/children/${parentId}`;
 
   return fetch(url, options)
@@ -35,6 +37,7 @@ export function fetchChildren(parentId) {
 }
 
 export function fetchSearch(searchString) {
+  options.method = 'GET';
   const url = `http://localhost:3001/search?q=${searchString}`;
 
   return fetch(url, options)
@@ -53,6 +56,7 @@ export function fetchSearch(searchString) {
 */
 
 export function fetchSponsored(deptId='', subdept='', type='', query='', qty='') {
+  options.method = 'GET';
   const url = `http://localhost:3001/search?q=${query}&sale=1&dept=${deptId}&subdept=${subdept}&type=${type}&qty=${qty}`
   console.log(url)
   return fetch(url, options)

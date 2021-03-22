@@ -7,7 +7,8 @@ const {PrismaClient} = require('@prisma/client')
 const prisma = new PrismaClient()
 const app = express()
 
-app.use(cors())
+app.use(cors(), express.json())
+
 
 app.get(`/allItems`, async (req, res) => {
   const allItems = await prisma.products.findMany({
@@ -18,7 +19,8 @@ app.get(`/allItems`, async (req, res) => {
           9,930,1965,4550,6138,
           7412,8333,11222,12674,15047,
           15601,16343,16985,17785,17835,
-          18267,18872,23047,23511,23780
+          18267,18872,23047,
+          23511,23780
         ] },
       },
       {
@@ -26,7 +28,8 @@ app.get(`/allItems`, async (req, res) => {
           9,930,1965,4550,6138,
           7412,8333,11222,12674,15047,
           15601,16343,16985,17785,17835,
-          18267,18872,23047,23511,23780
+          18267,18872,23047,
+          23511,23780
         ]},
       }
     ]}

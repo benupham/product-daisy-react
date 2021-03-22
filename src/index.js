@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { fetchAll, fetchChildren, fetchSearch, fetchSponsored } from './api/api';
+import { fetchAll, fetchChildren, fetchSearch, fetchSponsored, updateAllLocations } from './api/api';
+import Buttons from './components/Buttons';
 import Cart from './components/Cart';
 import Omnibox from './components/Omnibox';
 import ShopFloor from './components/ShopFloor';
@@ -26,50 +27,43 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    
     renderCSSVariables();
+
     fetchAll()
     .then(data => {
-      if (data.length > 0) {
-        console.log('the data:',data.length)
-        const origin = GRID_CENTER;
-        console.log(GRID_CENTER)
-        const deptData = data.filter(d => d.type === 'dept');
-        const results = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments', type: 'all'});
-        const first = data.filter(d => {
-          return firstSet.includes(d.dept) || firstSet.includes(d.id)
-        });
-        console.log('first',first.length)
-        const second = data.filter(d => {
-          return secondSet.includes(d.dept) || secondSet.includes(d.id)
-        });
-        console.log('second',second.length)
-        const t0 = performance.now();
-        let {items,grid,titleBars} = this.displayEverything(first, results[0], results[1], results[2]);
-        console.log('finished first set')
-        const finalResults = this.displayEverything(second, grid, items, titleBars);
-        const t1 = performance.now();
-        console.log(`finished plotting. time: ${t1-t0}`);
-        this.setState({
-          items: finalResults.items,
-          grid: finalResults.grid,
-          titleBars: finalResults.titleBars,
-          isLoaded: true,
-          lastClicked: items[0],
-        });
+      if (data.length === 0) return;
 
-        const bounds = items[0].groupGridBounds;
-        const lozenge = {
-          type: 'store',
-          id: 0,
-          name: `All Departments`,
-          parent: null,
-          qty: null,
-          groupGridBounds: bounds, 
-        }        
-        this.addLozenge(lozenge, bounds);
-        // zoomToBounds([[14000,14000],[16000,16000]], 1500);
-        
-      }
+      const origin = GRID_CENTER;
+
+      const deptData = data.filter(d => d.type === 'dept');
+      const [grid,items,titleBars] = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments', type: 'all'});
+
+      this.setState({
+        items,
+        grid,
+        titleBars,
+        data:data,
+        isLoaded: true,
+        lastClicked: null,
+      });
+      
+      // const csv = convertCSV(finalResults.items);
+      // console.log(csv);
+
+      const bounds = items[0].groupGridBounds;
+      const lozenge = {
+        type: 'store',
+        id: 0,
+        name: `All Departments`,
+        parent: null,
+        qty: null,
+        groupGridBounds: bounds, 
+      }        
+      this.addLozenge(lozenge, bounds);
+      zoomToBounds([[0,0],[grid[grid.length-1].x,grid[grid.length-1].y]], 1500);
+      
+
     });
   }
 
@@ -122,7 +116,7 @@ class App extends React.Component {
       }
       
     }
-    return {items,grid,titleBars}
+    this.setState({items,grid,titleBars});
   }
 
   addLozenge(item, bounds) {
@@ -275,6 +269,15 @@ class App extends React.Component {
         <Cart 
           cart={this.state.cart} 
           removeFromCart={this.removeFromCart}  
+        />
+
+        <Buttons
+          depts={this.state.items.filter(i => i.type === 'dept')} 
+          grid={this.state.grid}
+          items={this.state.items}
+          data={this.state.data}
+          titleBars={this.state.titleBars}
+          displayEverything={this.displayEverything}
         />
       </div>
     )
