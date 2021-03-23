@@ -33,8 +33,9 @@ export function exportCSV(items) {
     const n = name.replace(/"/g, '""'); 
     return acc += `${id},"${n}",${type},"${price}",${img},${parent},${dept},${subdept},${value},${sale},${x},${y},${width},${height}\n`;
   },csv);
+  const theCsv2 = theCsv.replaceAll('null','');
   var pom = document.createElement('a');
-  var blob = new Blob([theCsv],{type: 'text/csv;charset=utf-8;'});
+  var blob = new Blob([theCsv2],{type: 'text/csv;charset=utf-8;'});
   var url = URL.createObjectURL(blob);
   pom.href = url;
   pom.setAttribute('download', 'items-'+items.length+'.csv');

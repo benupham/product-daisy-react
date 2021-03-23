@@ -1,7 +1,7 @@
 export const imagesURL = window.location.href === "http://0.0.0.0:3000/" ? "./images/" : "https://s3-us-west-1.amazonaws.com/consumerland/";
 
-export const GRID_WIDTH = 520; // these need to be even numbers!
-export const GRID_HEIGHT = 520;
+export const GRID_WIDTH = 700; // these need to be even numbers!
+export const GRID_HEIGHT = 700;
 
 export const GRID_UNIT_SIZE = [200,200]; 
 export const GRID_CENTER = {x: GRID_WIDTH*GRID_UNIT_SIZE[0]/2, y: GRID_HEIGHT*GRID_UNIT_SIZE[1]/2};

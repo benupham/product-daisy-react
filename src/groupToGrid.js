@@ -84,20 +84,20 @@ function determineItemsGridSize(itemsType, itemsCount) {
 // and close to their parent category item 
 // return the updated items data
 const deptsAdded = [];
-export function groupToGridGroup(origin, itemsData, grid, parent) {
+export function groupToGridGroup(origin, itemsData, grid, parent, clickPos) {
   
   /* For subdepts, set their origin to be equally spaced points
      on the grid, by dividing the grid.length by the number of depts
      But careful to not position something directly at the end or beginning
    */
-  if (parent.type === 'dept') {
-    let originCell = Math.round(grid.length / (deptsList.length+1)) * Math.round(deptsList.indexOf(parent.id)+1) - Math.round(GRID_WIDTH/(deptsList.indexOf(parent.id)+1));
-    // if ((originCell % GRID_WIDTH < GRID_WIDTH/5) || (originCell % GRID_WIDTH > GRID_WIDTH * 0.8)){
-    //   originCell = Math.round(originCell + GRID_WIDTH/3);
-    // }
-    origin.cells[0] = originCell;
-    console.log(`${parent.name} subdept start point: ${origin.cells[0]}`);
-  }
+  // if (parent.type === 'dept') {
+  //   let originCell = Math.round(grid.length / (deptsList.length+1)) * Math.round(deptsList.indexOf(parent.id)+1) - Math.round(GRID_WIDTH/(deptsList.indexOf(parent.id)+1));
+  //   // if ((originCell % GRID_WIDTH < GRID_WIDTH/5) || (originCell % GRID_WIDTH > GRID_WIDTH * 0.8)){
+  //   //   originCell = Math.round(originCell + GRID_WIDTH/3);
+  //   // }
+  //   origin.cells[0] = originCell;
+  //   console.log(`${parent.name} subdept start point: ${origin.cells[0]}`);
+  // }
 
   
   const itemsType = itemsData[0].type; 
@@ -106,7 +106,7 @@ export function groupToGridGroup(origin, itemsData, grid, parent) {
   const [itemsGridWidth, itemsGridHeight] = determineItemsGridSize(itemsType, itemsData.length);
   
   // Then find the closest spot for that containing rectangle. 
-  const groupGrid = findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid);
+  const groupGrid = findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid, clickPos);
   
   //TODO: Add these group bounds to Parent
   // REMOVE from products
@@ -202,14 +202,24 @@ export function groupToGridSingle(itemData, grid, origin) {
 
 // Given an origin point, find the closest available
 // position from that origin for an item of width and height
-function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid) {
+function findClosestPosition(origin, itemsGridWidth, itemsGridHeight, grid, clickPos) {
   let minDist = 100000000;
   let d;
   let winner = []; 
-  
+  console.log('clickPos',clickPos)
   // Get the grid index of the origin item's topleft cell, or index of grid center
   let originCell; 
-  if (origin.cells) {
+  let minDist2 = 1000000000;
+  if (origin.type === 'dept' && clickPos) {
+    grid.forEach((cell, index) => {
+      let c = Math.hypot(cell.x - clickPos[0], cell.y - clickPos[1]);
+      if (c < minDist2) {
+        originCell = index;
+        minDist2 = c;
+      }  
+      // console.log(c);
+    })
+  } else if (origin.cells) {
     originCell = origin.cells[0];
   } else {
     originCell = Math.round((grid.length - 1)/2) + Math.round(GRID_HEIGHT/2);

@@ -1,12 +1,26 @@
 import React from 'react';
 import { exportCSV } from '../utilities';
+import { d3var } from '../zoom';
 
 export default class Buttons extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      openBtns: [],
+    }
+  }
 
   handleClick = (dept) => {
-    const {grid,titleBars} = this.props;
-    const data = this.props.data.filter(d => d.dept === dept.id);
-    this.props.displayEverything(data, grid, [dept], titleBars)
+    if (this.state.openBtns.includes(dept.id)) {
+      this.setState({openBtns: this.state.openBtns.filter(b=>b !== dept.id)});
+      // this.props.removeDescendants(dept.id);
+      return;
+    }
+    this.setState({openBtns: [...this.state.openBtns,dept.id]});
+    const deptData = {...dept};
+    // deptData.x = d3var.clicked[0];
+    // deptData.y = d3var.clicked[1];
+    this.props.displayDept(deptData, d3var.clicked);
   }
 
   render() {
@@ -14,13 +28,14 @@ export default class Buttons extends React.Component {
       return (<button  
                 key={dept.id}
                 onClick={()=> this.handleClick(dept)} 
+                disabled={this.state.openBtns.includes(dept.id)}
               >{`${dept.name} (${dept.value})`}</button>)
     })
     return (
       <div className="Buttons">
           <button 
           onClick={() => {exportCSV(this.props.items)}}
-          className="export" 
+          className={`export`}
           >Export</button>
         {deptButtons}
 
@@ -28,13 +43,4 @@ export default class Buttons extends React.Component {
       
     )
   }
-}
-
-function CartItem(props) {
-  return (
-    <li>
-      {props.name}
-      <span onClick={() => props.removeFromCart(props.itemIndex)}>&nbsp;&nbsp;X</span>
-  </li>
-  )
 }

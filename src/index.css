@@ -47,6 +47,9 @@ ol, ul {
   bottom: 3%;
   left: 3%;
 }
+.Buttons .open {
+  color: green;
+}
 
 .ShopFloor {
   width: 100%;

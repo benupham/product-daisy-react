@@ -10,6 +10,7 @@ import { groupToGridGroup, initGridCells } from './groupToGrid';
 import './index.css';
 import { zoomToBounds } from './zoom';
 
+const useDBLocations = true; 
 
 class App extends React.Component {
   constructor(props) {
@@ -39,11 +40,16 @@ class App extends React.Component {
       const deptData = data.filter(d => d.type === 'dept');
       const [grid,items,titleBars] = groupToGridGroup(origin, deptData, this.state.grid,{id: 0, name: 'All Departments', type: 'all'});
 
+      if (useDBLocations) {
+        data.forEach(d => {
+          d.bounds = [[d.x,d.y],[d.x+d.width,d.y+d.height]];
+        })
+      }
       this.setState({
-        items,
+        items: useDBLocations ? data : items,
         grid,
         titleBars,
-        data:data,
+        data: useDBLocations ? null : data,
         isLoaded: true,
         lastClicked: null,
       });
@@ -99,24 +105,37 @@ class App extends React.Component {
     });
   };
 
-  displayEverything = (data, grid, items, titleBars) => {
-    // console.log('items length: ',items.length);
+  displayDept = (dept, clickPos) => {
+    // this.setState({items: this.state.items.filter(i=>i.id !== dept.id)});
+    const {data,grid,titleBars} = this.state; 
+    const newItems = this.displayEverything(data, grid, [dept], titleBars, clickPos);
+    newItems.items = newItems.items.filter(i=>i.type !== 'dept');
+    this.setState({
+      items: [...this.state.items,...newItems.items],
+      grid: newItems.grid,
+      titleBars: newItems.titleBars,
+    })
+  }
+
+  displayEverything = (data, grid, items, titleBars, clickPos) => {
+    console.log('items length: ',items.length);
     for (let i = 0; i < items.length; i++) {
       if (items[i].type !== 'product' && items[i].isOpen !== true) {
         const newItems = data.filter(d => d.parent === items[i].id);
         if (newItems.length === 0) continue;
         items[i].isOpen = true;
-        const results = groupToGridGroup(items[i], newItems, grid, items[i]);
+        const results = groupToGridGroup(items[i], newItems, grid, items[i], clickPos);
         // console.log('results',results);
         grid = results[0];
         items = [...items,...results[1]];
         console.log(items.length + 'of ' + data.length);
         titleBars = [...titleBars,...results[2]];
-        return this.displayEverything(data,grid,items,titleBars);
+        return this.displayEverything(data,grid,items,titleBars, clickPos);
       }
       
     }
-    this.setState({items,grid,titleBars});
+    console.log('items', items)
+    return {items,grid,titleBars};
   }
 
   addLozenge(item, bounds) {
@@ -273,11 +292,9 @@ class App extends React.Component {
 
         <Buttons
           depts={this.state.items.filter(i => i.type === 'dept')} 
-          grid={this.state.grid}
           items={this.state.items}
-          data={this.state.data}
-          titleBars={this.state.titleBars}
-          displayEverything={this.displayEverything}
+          removeDescendants={this.removeDescendants}
+          displayDept={this.displayDept}
         />
       </div>
     )
